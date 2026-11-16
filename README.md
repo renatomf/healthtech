@@ -1,5 +1,7 @@
 # HealthTech — Agendamento de exames e acesso a laudos
 
+[![CI](https://github.com/renatomf/healthtech/actions/workflows/ci.yml/badge.svg)](https://github.com/renatomf/healthtech/actions/workflows/ci.yml)
+
 > 🚧 Em construção. Este README é o esqueleto da entrega e será completado ao longo do desenvolvimento (ver `docs/PLANO.md`).
 
 Aplicação web para uma clínica agendar exames, cadastrar laudos (rascunho → publicado) e disponibilizá-los ao paciente.

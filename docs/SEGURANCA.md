@@ -51,8 +51,8 @@ Laudo médico é dado pessoal sensível (LGPD, art. 5º, II).
 - Minimização: listagem do paciente traz só `hasPublishedReport`, não o texto.
 - Auditoria mínima: `created_by`, `canceled_by`, `published_by` com data.
 - Seed fictício: domínio `@demo.local`, sem CPF.
-- Segredos: só `.env.example` no repo; `.env` no `.gitignore`; `gitleaks` no CI.
+- Segredos: só `.env.example` no repo; `.env` no `.gitignore`; `gitleaks` no CI sobre todo o histórico. Os 5 achados atuais são valores fictícios de propósito (texto "troque-por-…" do `.env.example`, segredo e JWT falso dos testes), ignorados em `.gitleaksignore` pela impressão digital exata — um segredo novo com o mesmo texto em outro lugar continua sendo pego.
 
 ## Pendências para produção
 
-Revogação de sessão / refresh token rotativo; MFA para a equipe; auditoria de **leitura** de laudos; criptografia em repouso e backups; política de retenção e base legal; HTTPS obrigatório com HSTS; varredura contínua de dependências.
+Revogação de sessão / refresh token rotativo; MFA para a equipe; auditoria de **leitura** de laudos; criptografia em repouso e backups; política de retenção e base legal; HTTPS obrigatório com HSTS; varredura contínua de dependências. O CI roda `pnpm audit --audit-level high`; hoje há 3 alertas moderados, todos em ferramentas de desenvolvimento que não vão para a imagem de produção (`esbuild` via `drizzle-kit`; `glob`/`minimatch` via `testcontainers`).

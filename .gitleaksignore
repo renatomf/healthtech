@@ -1,0 +1,7 @@
+# Falsos positivos revisados: valores fictícios de propósito (ver docs/SEGURANCA.md).
+# Ignorados pela impressão digital exata (commit:arquivo:regra:linha), não pelo texto.
+e168fa4e4a06c25d31fe1ea600543d9c76a34f53:apps/api/src/modules/identity/http/auth.int.test.ts:generic-api-key:91
+e168fa4e4a06c25d31fe1ea600543d9c76a34f53:apps/api/test/app.ts:generic-api-key:12
+83439d6143eb93ef7a57ab665cdee97da669d140:apps/api/src/shared/env.test.ts:generic-api-key:55
+83439d6143eb93ef7a57ab665cdee97da669d140:apps/api/src/shared/env.ts:generic-api-key:3
+b8a8b3ccefb7de8febdabb3ce99b2ea85cc65c11:.env.example:generic-api-key:13

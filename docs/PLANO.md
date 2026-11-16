@@ -26,7 +26,7 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 - [x] Front paciente (mobile-first): lista com situação e selo, leitura do laudo
 - [x] Loading/vazio/erro; diálogos de confirmação (publicar, cancelar); mensagens por `code`; 401 → login
 - [x] Playwright: 3 fluxos + axe
-- [ ] CI: biome, typecheck, depcruise, testes com `TZ=UTC` e `TZ=Asia/Tokyo`, `pnpm audit`, gitleaks
+- [x] CI: biome, typecheck, depcruise, testes com `TZ=UTC` e `TZ=Asia/Tokyo`, `pnpm audit`, gitleaks
 - [ ] Extras (~1h30): `demo:race`, `docs/api/api.http`, `traceId` nos erros, `dependency-cruiser`, diagrama ER, tag `v1.0.0`
 - [ ] README completo, `PROCESSO_IA.md`, `TEMPO.md` preenchidos
 
