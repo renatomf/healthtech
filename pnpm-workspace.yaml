@@ -2,9 +2,8 @@ packages:
   - apps/*
   - packages/*
 
-# Scripts de instalação liberados explicitamente (pnpm bloqueia por padrão).
 allowBuilds:
-  esbuild: true # binário usado pelo drizzle-kit
-  cpu-features: false # opcional do ssh2 (Testcontainers); não usado
-  protobufjs: false # só checagem de versão no postinstall
-  ssh2: false # Docker via SSH não é usado
+  esbuild: true
+  cpu-features: false
+  protobufjs: false
+  ssh2: false

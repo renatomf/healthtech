@@ -5,14 +5,14 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1794861432773,
+      "when": 1794862871235,
       "tag": "0000_initial_schema",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1794861437853,
+      "when": 1794862872311,
       "tag": "0001_report_immutable_trigger",
       "breakpoints": true
     }

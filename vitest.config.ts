@@ -11,8 +11,6 @@ export default defineConfig({
         },
       },
       {
-        // Postgres real via Testcontainers (exige Docker). Arquivos em série:
-        // compartilham o banco e fazem TRUNCATE entre testes.
         test: {
           name: 'integration',
           include: ['apps/api/src/**/*.int.test.ts'],

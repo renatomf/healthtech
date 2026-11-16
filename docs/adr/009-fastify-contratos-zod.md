@@ -23,3 +23,5 @@ Mudança de contrato quebra a compilação dos dois lados (desejado).
 ## Escolhas menores (registradas aqui, sem ADR próprio)
 
 Biome em vez de ESLint + Prettier · Tailwind + shadcn/ui · TanStack Query · React Router · pnpm workspaces (sem Turborepo).
+
+API roda o `.ts` direto com o type stripping do Node 24 (sem build, sem `tsx`); `packages/shared` exporta o código-fonte. TypeScript 6, não 7: o `dependency-cruiser` ainda não lê projetos TS 7 (analisava 0 módulos).

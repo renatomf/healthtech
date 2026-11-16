@@ -7,7 +7,7 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 
 - [x] Monorepo pnpm (`apps/api`, `apps/web`, `packages/shared`), TS strict, Biome, `dependency-cruiser`, `packageManager` via Corepack — `e2e/` é criado junto com os testes Playwright (Dia 3), para não deixar pasta vazia
 - [x] Docker Compose (postgres, api, web) + `.env` validado por Zod no boot
-- [x] Schema Drizzle + migration com constraints e trigger (ver `ARQUITETURA.md`) — com Testcontainers adiantado e 15 testes de integração das constraints (item "constraints via SQL" do Dia 2)
+- [x] Schema Drizzle + migration com constraints e trigger (ver `ARQUITETURA.md`) — Testcontainers adiantado, com testes das constraints
 - [ ] Seed relativo à data atual (ver "Seed" abaixo)
 - [ ] Testcontainers + `FixedClock`; **cenários 1 e 5 escritos, falhando** (commit vermelho)
 - [ ] Auth: login, logout, me, `requireRole`, rate limit, helmet, CORS

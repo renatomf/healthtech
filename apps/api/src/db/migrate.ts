@@ -4,8 +4,7 @@ import { createDb } from './client.ts';
 
 const migrationsFolder = fileURLToPath(new URL('./migrations', import.meta.url));
 
-/** Aplica as migrations versionadas. Mesma função usada pelo CLI e pelos testes. */
-export async function runMigrations(databaseUrl: string): Promise<void> {
+export async function runMigrations(databaseUrl: string) {
   const { db, close } = createDb(databaseUrl, { max: 1 });
   try {
     await migrate(db, { migrationsFolder });
@@ -18,5 +17,4 @@ if (import.meta.main) {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error('DATABASE_URL não definida');
   await runMigrations(url);
-  process.stdout.write('migrations aplicadas\n');
 }

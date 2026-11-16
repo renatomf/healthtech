@@ -1,6 +1,3 @@
-# Sobe banco, API e web: `cp .env.example .env && docker compose up --build`
-# Banco: localhost:55432 · API: http://localhost:3333 · Web: http://localhost:5173
-
 services:
   db:
     image: postgres:17-alpine
@@ -24,7 +21,6 @@ services:
       target: api
     env_file: .env
     environment:
-      # Dentro da rede do Compose o banco é o serviço "db", não localhost.
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:
       - "${API_PORT:-3333}:${API_PORT:-3333}"

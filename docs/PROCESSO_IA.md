@@ -29,10 +29,10 @@
 
 ## Onde a IA errou e como foi corrigido
 
-| #   | O que a IA sugeriu                                                                     | Por que estava errado                                                                                                                  | Correção                                                       | Commit            |
-| --- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------------- |
-| 1   | Índice único em `scheduled_at` sem considerar duração/salas (no brainstorming inicial) | Correto aqui (1 sala, slots fixos), mas a justificativa precisava ser explícita                                                        | ADR-003 documenta quando trocar por exclusion constraint       | —                 |
-| 2   | Usar TypeScript 7 (versão mais recente) no monorepo                                    | `dependency-cruiser` não suporta a API do TS 7: só avisou e cruzou 0 módulos, então as regras de arquitetura passariam sem checar nada | Fixado TypeScript 6.x; ADR-010 registra o critério para migrar | `chore: monorepo` |
+| #   | O que a IA sugeriu                                                                     | Por que estava errado                                                                                                                  | Correção                                                 | Commit            |
+| --- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ----------------- |
+| 1   | Índice único em `scheduled_at` sem considerar duração/salas (no brainstorming inicial) | Correto aqui (1 sala, slots fixos), mas a justificativa precisava ser explícita                                                        | ADR-003 documenta quando trocar por exclusion constraint | —                 |
+| 2   | Usar TypeScript 7 (versão mais recente) no monorepo                                    | `dependency-cruiser` não suporta a API do TS 7: só avisou e cruzou 0 módulos, então as regras de arquitetura passariam sem checar nada | Fixado TypeScript 6.x; registrado no ADR-009             | `chore: monorepo` |
 
 ## Revisado linha a linha
 
