@@ -184,6 +184,10 @@ Pendências para produção (revogação de sessão, MFA, auditoria de leitura, 
 
 Ver [`docs/TEMPO.md`](docs/TEMPO.md).
 
+## Créditos
+
+Foto da tela de login: [Ato Aikins](https://unsplash.com/photos/TPT4pevJEmQ) no Unsplash ([licença Unsplash](https://unsplash.com/license): uso livre, sem atribuição obrigatória). Ícones: [Lucide](https://lucide.dev). Fonte: [Geist](https://vercel.com/font).
+
 ## Uso de IA
 
 Vibe coding é requisito do desafio. Processo, prompts e correções em [`docs/PROCESSO_IA.md`](docs/PROCESSO_IA.md).

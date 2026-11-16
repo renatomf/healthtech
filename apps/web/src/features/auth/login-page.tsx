@@ -26,10 +26,10 @@ export function LoginPage() {
 
   return (
     <div className="grid min-h-dvh gap-3 p-3 lg:h-dvh lg:grid-cols-[1.1fr_1fr]">
-      <aside className="relative hidden flex-col justify-between overflow-hidden rounded-4xl bg-linear-to-b from-hero-from to-hero-to p-10 text-white lg:flex">
+      <aside className="hidden min-h-0 flex-col gap-8 rounded-4xl bg-linear-to-b from-hero-from to-hero-to p-10 text-white lg:flex">
         <Brand inverted />
-        <div className="space-y-6">
-          <h1 className="max-w-2xl text-5xl leading-[1.05] font-light tracking-tight xl:text-6xl">
+        <div className="space-y-4">
+          <h1 className="max-w-2xl text-5xl leading-[1.05] font-light tracking-tight">
             Exames agendados.
             <br />
             Laudos no lugar certo.
@@ -39,7 +39,17 @@ export function LoginPage() {
             ficam prontos.
           </p>
         </div>
-        <p className="text-xs">Horários exibidos no horário de Brasília.</p>
+        {/* Foto: Ato Aikins / Unsplash (licença Unsplash). Decorativa, por isso alt vazio. */}
+        <figure className="relative min-h-0 flex-1 overflow-hidden rounded-3xl">
+          <img
+            src="/images/doctor.webp"
+            alt=""
+            className="absolute inset-0 size-full object-cover object-[50%_18%]"
+          />
+          <figcaption className="absolute bottom-4 left-4 w-fit rounded-full bg-surface/90 px-4 py-2 text-xs text-foreground backdrop-blur">
+            Horários exibidos no horário de Brasília.
+          </figcaption>
+        </figure>
       </aside>
 
       <main className="flex flex-col rounded-4xl bg-surface p-6 sm:p-8 lg:min-h-0 lg:overflow-y-auto">
