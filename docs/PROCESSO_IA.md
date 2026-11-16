@@ -27,6 +27,7 @@
 | 3   | Etapa 2 do Dia 1        | "etapa 2 siga"                                                                                                                       | Compose (db, api, web), `.env` validado por Zod, logger com redação; testado com `docker compose up`                                                       |
 | 4   | Etapa 3 do Dia 1        | "siga em frente"                                                                                                                     | Schema Drizzle, migrations (gerada + trigger), Testcontainers e 15 testes de constraints; porta do banco movida para 55432 por conflito com Postgres local |
 | 5   | Revisão de estilo       | "até aqui está muito overengineering" / "o código é compreensível ou muito feito por IA?" / "siga simples da maneira que planejamos" | Limpeza (−600 linhas) e seed com utilitários de fuso testados antes (TDD)                                                                                  |
+| 6   | Autenticação            | "siga" (direto no `main`)                                                                                                            | Testes de login, me, logout, rate limit e perfil conferido no banco escritos antes; depois o módulo `identity`                                             |
 
 ## Onde a IA errou e como foi corrigido
 

@@ -10,7 +10,7 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 - [x] Schema Drizzle + migration com constraints e trigger (ver `ARQUITETURA.md`) — Testcontainers adiantado, com testes das constraints
 - [x] Seed relativo à data atual (ver "Seed" abaixo)
 - [ ] Testcontainers + `FixedClock`; **cenários 1 e 5 escritos, falhando** (commit vermelho)
-- [ ] Auth: login, logout, me, `requireRole`, rate limit, helmet, CORS
+- [x] Auth: login, logout, me, `requireRole`, rate limit, helmet, CORS
 - [ ] Agendamentos: criar, listar com filtros (data no fuso, paciente), cancelar, `/slots`; cenários 1 e 5 passando
 
 ## Dia 2 — laudos, autorização e telas da clínica

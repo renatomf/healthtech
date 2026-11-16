@@ -194,6 +194,9 @@ GET  /health/live · GET /health/ready · GET /docs (Swagger)
 | Não encontrado / sem acesso      | —                                          | 404  | `NOT_FOUND`                        |
 | Perfil errado                    | —                                          | 403  | `FORBIDDEN`                        |
 | Sem autenticação                 | —                                          | 401  | `UNAUTHENTICATED`                  |
+| Login inválido (e-mail ou senha) | —                                          | 401  | `INVALID_CREDENTIALS`              |
+| Corpo inválido / campo extra     | Zod                                        | 400  | `VALIDATION_ERROR`                 |
+| Excesso de tentativas de login   | rate limit                                 | 429  | `RATE_LIMITED`                     |
 
 O front decide a mensagem pelo `code`, nunca pelo texto.
 

@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto';
+import bcrypt from 'bcryptjs';
 import type { Db } from '../src/db/client.ts';
 import { appointments, examTypes, reports, users } from '../src/db/schema.ts';
+
+export const TEST_PASSWORD = 'Senha@123';
+// Custo 4 só nos testes, para não deixar a suíte lenta.
+const TEST_PASSWORD_HASH = bcrypt.hashSync(TEST_PASSWORD, 4);
 
 function first<T>(rows: T[]): T {
   const [row] = rows;
@@ -12,7 +17,7 @@ export async function makeUser(db: Db, overrides: Partial<typeof users.$inferIns
   const values = {
     name: 'Paciente Teste',
     email: `user-${randomUUID()}@demo.local`,
-    passwordHash: 'hash-fake',
+    passwordHash: TEST_PASSWORD_HASH,
     role: 'PATIENT' as const,
     ...overrides,
   };
