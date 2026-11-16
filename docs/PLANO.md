@@ -15,10 +15,10 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 
 ## Dia 2 — laudos, autorização e telas da clínica
 
-- [ ] **Cenários 2, 3 e 4 escritos, falhando**
-- [ ] Laudos: salvar rascunho, publicar (`FOR UPDATE` + UPDATE condicional)
-- [ ] Rotas do paciente com escopo na query e DTO próprio; cenários 2, 3 e 4 passando
-- [ ] Extras: corrida cancelar × publicar, varredura de autorização, filtro 22:30, constraints via SQL
+- [x] **Cenários 2, 3 e 4 escritos, falhando**
+- [x] Laudos: salvar rascunho, publicar (`FOR UPDATE` + UPDATE condicional)
+- [x] Rotas do paciente com escopo na query e DTO próprio; cenários 2, 3 e 4 passando
+- [x] Extras: corrida cancelar × publicar, varredura de autorização, filtro 22:30, constraints via SQL
 - [ ] Front clínica: login, lista com filtros, novo agendamento (combobox + slots), detalhe com editor de laudo, cancelar
 
 ## Dia 3 — paciente, acabamento e documentação

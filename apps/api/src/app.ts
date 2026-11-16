@@ -14,7 +14,8 @@ import {
 import type { Db } from './db/client.ts';
 import { AUTH_COOKIE, authenticate, requireRole } from './modules/identity/http/auth-hooks.ts';
 import { authRoutes } from './modules/identity/http/auth-routes.ts';
-import { patientRoutes } from './modules/identity/http/patient-routes.ts';
+import { patientSearchRoutes } from './modules/identity/http/patient-search-routes.ts';
+import { clinicReportRoutes, patientRoutes } from './modules/reports/http/report-routes.ts';
 import { schedulingRoutes } from './modules/scheduling/http/scheduling-routes.ts';
 import { type Clock, systemClock } from './shared/clock.ts';
 import type { Env } from './shared/env.ts';
@@ -70,10 +71,21 @@ export function buildApp({ env, db, clock = systemClock, logger = false }: AppDe
     async (clinic) => {
       clinic.addHook('onRequest', authenticate(db));
       clinic.addHook('onRequest', requireRole('CLINIC'));
-      clinic.register(patientRoutes(db));
+      clinic.register(patientSearchRoutes(db));
       clinic.register(schedulingRoutes({ db, clock, hours }));
+      clinic.register(clinicReportRoutes({ db, clock }));
     },
     { prefix: '/clinic' },
+  );
+
+  // Toda rota registrada aqui dentro exige login com perfil PATIENT.
+  app.register(
+    async (patient) => {
+      patient.addHook('onRequest', authenticate(db));
+      patient.addHook('onRequest', requireRole('PATIENT'));
+      patient.register(patientRoutes({ db, clock }));
+    },
+    { prefix: '/patient' },
   );
 
   return app;

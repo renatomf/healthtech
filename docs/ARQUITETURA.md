@@ -144,6 +144,8 @@ await db.transaction(async (tx) => {
 
 Isolamento: READ COMMITTED (padrão). `SERIALIZABLE` exigiria retry em toda transação; o lock de linha é mais explícito.
 
+**Cuidado com o lock:** o `SELECT … FOR UPDATE` trava só o agendamento, e o status do laudo é lido **numa consulta separada, depois do lock**. Num `JOIN` com `FOR UPDATE OF appointments`, quem espera o lock relê só a linha travada; o laudo viria do snapshot antigo e o cancelamento passaria mesmo com o laudo já publicado. O teste de corrida (20 rodadas) pegou exatamente isso.
+
 ## Fuso horário
 
 | Onde            | Regra                                                                                                  |
@@ -168,7 +170,8 @@ GET  /clinic/slots?date=YYYY-MM-DD
 GET  /clinic/appointments?date=&patientId=      (até 100, mais recentes primeiro)
 POST /clinic/appointments
 POST /clinic/appointments/:id/cancel
-GET  /clinic/appointments/:id                 (inclui laudo, rascunho ou publicado)
+GET  /clinic/appointments/:id
+GET  /clinic/appointments/:id/report          (rascunho ou publicado)
 PUT  /clinic/appointments/:id/report          (cria ou edita rascunho)
 POST /clinic/appointments/:id/report/publish
 
@@ -190,6 +193,7 @@ GET  /health/live · GET /health/ready · GET /docs (Swagger)
 | Laudo duplicado                       | `23505` em `uq_report_appointment`         | 409  | `REPORT_ALREADY_EXISTS`                     |
 | Laudo publicado alterado              | domínio ou trigger `P0001`                 | 409  | `REPORT_ALREADY_PUBLISHED`                  |
 | Laudo em agendamento cancelado        | domínio                                    | 409  | `APPOINTMENT_CANCELED`                      |
+| Publicar sem rascunho salvo           | domínio                                    | 409  | `REPORT_DRAFT_REQUIRED`                     |
 | Cancelar com laudo publicado          | domínio                                    | 409  | `APPOINTMENT_HAS_PUBLISHED_REPORT`          |
 | Cancelar agendamento já cancelado     | domínio                                    | 409  | `APPOINTMENT_ALREADY_CANCELED`              |
 | Paciente ou tipo de exame inexistente | aplicação                                  | 422  | `PATIENT_NOT_FOUND` / `EXAM_TYPE_NOT_FOUND` |

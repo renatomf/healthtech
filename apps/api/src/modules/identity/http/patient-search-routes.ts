@@ -4,7 +4,7 @@ import { z } from 'zod';
 import type { Db } from '../../../db/client.ts';
 import { searchPatients } from '../infra/user-repository.ts';
 
-export function patientRoutes(db: Db): FastifyPluginAsyncZod {
+export function patientSearchRoutes(db: Db): FastifyPluginAsyncZod {
   return async (app) => {
     app.get(
       '/patients',

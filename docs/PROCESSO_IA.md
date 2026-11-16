@@ -29,6 +29,7 @@
 | 5   | Revisão de estilo       | "até aqui está muito overengineering" / "o código é compreensível ou muito feito por IA?" / "siga simples da maneira que planejamos" | Limpeza (−600 linhas) e seed com utilitários de fuso testados antes (TDD)                                                                                  |
 | 6   | Autenticação            | "siga" (direto no `main`)                                                                                                            | Testes de login, me, logout, rate limit e perfil conferido no banco escritos antes; depois o módulo `identity`                                             |
 | 7   | Agendamentos            | "próxima etapa"                                                                                                                      | Commit vermelho dos cenários 1 e 5; depois domínio (TDD), repositório, casos de uso e rotas `/clinic`; testado também com `TZ=Asia/Tokyo`                  |
+| 8   | Laudos e paciente       | "próximo passo"                                                                                                                      | Commit vermelho dos cenários 2–4; domínio, rotas da clínica e do paciente; corrida cancelar × publicar e varredura de autorização                          |
 
 ## Onde a IA errou e como foi corrigido
 

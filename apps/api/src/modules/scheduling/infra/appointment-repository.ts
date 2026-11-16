@@ -60,13 +60,19 @@ export async function insertAppointment(db: Db, values: typeof appointments.$inf
 
 /** Trava a linha do agendamento até o fim da transação (ADR-004). */
 export async function lockAppointment(tx: Tx, id: string) {
-  const [row] = await tx
-    .select({ status: appointments.status, reportStatus: reports.status })
+  const [appointment] = await tx
+    .select({ status: appointments.status })
     .from(appointments)
-    .leftJoin(reports, eq(reports.appointmentId, appointments.id))
     .where(eq(appointments.id, id))
-    .for('update', { of: appointments });
-  return row;
+    .for('update');
+  if (!appointment) return undefined;
+  // Consulta separada, DEPOIS do lock: em READ COMMITTED ela enxerga o que a transação
+  // que segurava o lock acabou de gravar. Num JOIN com FOR UPDATE, o laudo viria desatualizado.
+  const [report] = await tx
+    .select({ status: reports.status })
+    .from(reports)
+    .where(eq(reports.appointmentId, id));
+  return { status: appointment.status, reportStatus: report?.status ?? null };
 }
 
 export async function markCanceled(tx: Tx, id: string, actorId: string, now: Date) {
