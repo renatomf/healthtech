@@ -1,0 +1,47 @@
+# Roteiro de segurança executável (VS Code + extensão "REST Client", ou JetBrains HTTP Client).
+# Pré-requisito: `docker compose up -d` e `pnpm db:reset`. Rode as requisições em ordem;
+# o cookie de login fica guardado e é reaproveitado nas seguintes.
+
+@api = http://localhost:3333
+@password = Demo@1234
+
+### 1. João (paciente) entra
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "email": "joao@demo.local", "password": "{{password}}" }
+
+### 2. João lista os próprios exames (sem conteúdo de laudo, só hasPublishedReport)
+# @name joao
+GET {{api}}/patient/appointments
+
+### 3. João lê o próprio laudo publicado → 200
+GET {{api}}/patient/appointments/{{joao.response.body.$[?(@.hasPublishedReport == true)].id}}/report
+
+### 4. Maria (outra paciente) entra
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "email": "maria@demo.local", "password": "{{password}}" }
+
+### 5. Maria tenta ler o laudo do João → 404 NOT_FOUND (não revela que existe)
+GET {{api}}/patient/appointments/{{joao.response.body.$[?(@.hasPublishedReport == true)].id}}/report
+
+### 6. Maria tenta o rascunho do João → 404 NOT_FOUND
+GET {{api}}/patient/appointments/{{joao.response.body.$[?(@.examType.name == 'Ultrassom')].id}}/report
+
+### 7. Maria tenta uma rota da clínica → 403 FORBIDDEN
+GET {{api}}/clinic/appointments
+
+### 8. Sem cookie → 401 UNAUTHENTICATED
+# @no-cookie-jar
+GET {{api}}/patient/appointments
+
+### 9. Campo extra no corpo (mass assignment) → 400 VALIDATION_ERROR
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "email": "joao@demo.local", "password": "{{password}}", "role": "CLINIC" }
+
+### 10. Toda resposta de erro traz traceId = cabeçalho x-request-id (procure no log da API)
+GET {{api}}/rota-que-nao-existe

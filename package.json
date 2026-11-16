@@ -16,12 +16,13 @@
     "db:reset": "pnpm --filter @healthtech/api db:reset",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm -r typecheck && tsc -p scripts",
     "depcruise": "depcruise apps packages --config .dependency-cruiser.cjs",
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:integration": "vitest run --project integration",
     "test:e2e": "pnpm --filter @healthtech/e2e test",
+    "demo:race": "node scripts/demo-race.ts",
     "verify": "pnpm lint && pnpm typecheck && pnpm depcruise && pnpm test"
   },
   "devDependencies": {
