@@ -25,34 +25,34 @@ export function LoginPage() {
   const { errors } = form.formState;
 
   return (
-    <div className="grid min-h-dvh gap-3 p-3 lg:h-dvh lg:grid-cols-[1.1fr_1fr]">
-      <aside className="hidden min-h-0 flex-col gap-8 rounded-4xl bg-linear-to-b from-hero-from to-hero-to p-10 text-white lg:flex">
-        <Brand inverted />
-        <div className="space-y-4">
-          <h1 className="max-w-2xl text-5xl leading-[1.05] font-light tracking-tight">
+    <div className="grid min-h-dvh lg:h-dvh lg:grid-cols-[1.1fr_1fr]">
+      {/* Composição do hero mobile do DocShield: título centralizado e o profissional
+          "saindo" da base do degradê. */}
+      <aside className="relative hidden min-h-0 flex-col items-center overflow-hidden bg-linear-to-b from-hero-from to-hero-to px-10 pt-10 text-center text-white lg:flex">
+        <div className="self-start">
+          <Brand inverted />
+        </div>
+        <div className="mt-10 space-y-4">
+          <h1 className="text-5xl leading-[1.05] font-light tracking-tight">
             Exames agendados.
             <br />
             Laudos no lugar certo.
           </h1>
-          <p className="max-w-sm text-sm leading-relaxed">
+          <p className="mx-auto max-w-sm text-sm leading-relaxed">
             A clínica agenda e publica; o paciente acompanha seus exames e lê os laudos assim que
             ficam prontos.
           </p>
+          <p className="text-xs">Horários exibidos no horário de Brasília.</p>
         </div>
-        {/* Foto: Ato Aikins / Unsplash (licença Unsplash). Decorativa, por isso alt vazio. */}
-        <figure className="relative min-h-0 flex-1 overflow-hidden rounded-3xl">
-          <img
-            src="/images/doctor.webp"
-            alt=""
-            className="absolute inset-0 size-full object-cover object-[50%_18%]"
-          />
-          <figcaption className="absolute bottom-4 left-4 w-fit rounded-full bg-surface/90 px-4 py-2 text-xs text-foreground backdrop-blur">
-            Horários exibidos no horário de Brasília.
-          </figcaption>
-        </figure>
+        {/* Foto: Pexels (licença Pexels), recortada sem fundo. Decorativa, por isso alt vazio. */}
+        <img
+          src="/images/doctor.webp"
+          alt=""
+          className="mt-auto max-h-[66%] min-h-0 w-auto object-contain object-bottom"
+        />
       </aside>
 
-      <main className="flex flex-col rounded-4xl bg-surface p-6 sm:p-8 lg:min-h-0 lg:overflow-y-auto">
+      <main className="flex flex-col bg-surface p-6 sm:p-8 lg:min-h-0 lg:overflow-y-auto">
         <div className="flex items-center justify-between">
           <span className="lg:invisible">
             <Brand />

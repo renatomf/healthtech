@@ -186,7 +186,7 @@ Ver [`docs/TEMPO.md`](docs/TEMPO.md).
 
 ## Créditos
 
-Foto da tela de login: [Ato Aikins](https://unsplash.com/photos/TPT4pevJEmQ) no Unsplash ([licença Unsplash](https://unsplash.com/license): uso livre, sem atribuição obrigatória). Ícones: [Lucide](https://lucide.dev). Fonte: [Geist](https://vercel.com/font).
+Foto da tela de login: banco de imagens [Pexels](https://www.pexels.com) ([licença Pexels](https://www.pexels.com/license/): uso livre, sem atribuição obrigatória), fornecida pelo autor e recortada (fundo removido) para compor o painel. Ícones: [Lucide](https://lucide.dev). Fonte: [Geist](https://vercel.com/font).
 
 ## Uso de IA
 
