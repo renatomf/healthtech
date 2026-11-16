@@ -27,7 +27,7 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 - [x] Loading/vazio/erro; diálogos de confirmação (publicar, cancelar); mensagens por `code`; 401 → login
 - [x] Playwright: 3 fluxos + axe
 - [x] CI: biome, typecheck, depcruise, testes com `TZ=UTC` e `TZ=Asia/Tokyo`, `pnpm audit`, gitleaks
-- [ ] Extras (~1h30): `demo:race`, `docs/api/api.http`, `traceId` nos erros, `dependency-cruiser`, diagrama ER, tag `v1.0.0`
+- [x] Extras (~1h30): `demo:race`, `docs/api/api.http`, `traceId` nos erros, `dependency-cruiser`, diagrama ER (mermaid em `ARQUITETURA.md`) — tag `v1.0.0` no fim, depois do push
 - [ ] README completo, `PROCESSO_IA.md`, `TEMPO.md` preenchidos
 
 ## Antes de enviar

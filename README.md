@@ -2,9 +2,9 @@
 
 [![CI](https://github.com/renatomf/healthtech/actions/workflows/ci.yml/badge.svg)](https://github.com/renatomf/healthtech/actions/workflows/ci.yml)
 
-> 🚧 Em construção. Este README é o esqueleto da entrega e será completado ao longo do desenvolvimento (ver `docs/PLANO.md`).
-
 Aplicação web para uma clínica agendar exames, cadastrar laudos (rascunho → publicado) e disponibilizá-los ao paciente.
+
+**Em uma frase:** as regras críticas (horário único, laudo imutável, paciente só vê o que é dele) são garantidas pelo banco e pela consulta, não só pela tela, e cada uma tem um teste que a prova — inclusive sob concorrência e com o servidor em outro fuso.
 
 **Stack:** React + Vite + TypeScript · Fastify + TypeScript · PostgreSQL + Drizzle · Vitest + Testcontainers + Playwright · Docker Compose · pnpm workspaces.
 
@@ -32,7 +32,10 @@ Requisitos: Docker; para o modo local, também Node 24 (ver `.nvmrc`) e pnpm via
 ```bash
 cp .env.example .env
 docker compose up --build -d
+docker compose exec api node src/db/seed.ts   # contas e dados de demonstração
 ```
+
+Abra http://localhost:5173 e entre com uma das [contas de demonstração](#contas-de-demonstração).
 
 | Serviço    | Endereço                                 |
 | ---------- | ---------------------------------------- |
@@ -88,11 +91,32 @@ docker compose exec api node src/db/seed.ts   # com Docker
 
 ## Testes
 
-`pnpm test:unit` (rápido, sem Docker) · `pnpm test:integration` (Postgres real via Testcontainers, exige Docker) · `pnpm test` (ambos) · `pnpm verify` (lint + typecheck + depcruise + testes). `pnpm test:e2e` (Playwright + axe; exige o stack de pé com `docker compose up -d` e o Google Chrome instalado; reseta o banco antes).
+| Comando                 | O que roda                                                                                                                          | Requisitos                                           |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `pnpm test:unit`        | Regras de domínio, fuso, mensagens do front                                                                                         | —                                                    |
+| `pnpm test:integration` | API + Postgres real (Testcontainers, migrations reais): os 5 cenários do enunciado, corridas, constraints, varredura de autorização | Docker                                               |
+| `pnpm test`             | Os dois acima                                                                                                                       | Docker                                               |
+| `pnpm verify`           | Biome + typecheck + dependency-cruiser + `pnpm test`                                                                                | Docker                                               |
+| `pnpm test:e2e`         | Playwright: 3 fluxos + navegador em `Asia/Tokyo` + axe em 6 telas nos temas claro e escuro (reseta o banco antes)                   | Stack no ar (`docker compose up -d`) e Google Chrome |
+| `pnpm demo:race`        | 10 reservas simultâneas do mesmo horário contra a API rodando: 1 aceita, 9 × 409                                                    | Stack no ar com seed                                 |
+
+Os 5 cenários do enunciado estão em `describe('Cenário N — …')`: [agendamento](apps/api/src/modules/scheduling/http/scenarios.int.test.ts) (1 e 5) e [laudos](apps/api/src/modules/reports/http/scenarios.int.test.ts) (2, 3 e 4). O CI roda tudo com `TZ=UTC` e com `TZ=Asia/Tokyo`.
 
 ## Variáveis de ambiente
 
-Ver [`.env.example`](.env.example).
+Exemplo completo, sem segredos reais, em [`.env.example`](.env.example). A API valida tudo com Zod ao iniciar.
+
+| Variável                                            | Padrão / exemplo                      | Uso                                                           |
+| --------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------- |
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | `clinic` / … / `clinic`               | Banco do Compose                                              |
+| `POSTGRES_HOST_PORT`                                | `55432`                               | Porta do banco no host                                        |
+| `DATABASE_URL`                                      | `postgres://…@localhost:55432/clinic` | Conexão da API (no Compose é sobrescrita para o serviço `db`) |
+| `JWT_SECRET`                                        | ≥ 32 caracteres                       | Assinatura do token. **Troque em produção**                   |
+| `JWT_EXPIRES_IN`                                    | `8h`                                  | Validade da sessão                                            |
+| `WEB_ORIGIN`                                        | `http://localhost:5173`               | Única origem liberada no CORS                                 |
+| `CLINIC_TIMEZONE`                                   | `America/Sao_Paulo`                   | Fuso de exibição e de "dia"                                   |
+| `CLINIC_OPEN_TIME` / `CLINIC_CLOSE_TIME`            | `08:00` / `18:00`                     | Funcionamento (último horário 17:30)                          |
+| `VITE_API_URL`                                      | `http://localhost:3333`               | URL da API usada pelo front (no build)                        |
 
 ## Matriz de requisitos
 
@@ -113,7 +137,17 @@ Ver [`.env.example`](.env.example).
 
 ## Roteiro de avaliação
 
-_A completar com os passos de `docs/ARQUITETURA.md` e `pnpm demo:race`._
+Com o stack no ar e o seed carregado (~10 min):
+
+1. **Clínica** — entre como `clinica@demo.local`. No calendário, escolha **ontem**: A (João, publicado), B (João, rascunho) e C (Maria, publicado).
+2. **Rascunho → publicado** — abra B, edite o texto, _Salvar rascunho_ e _Publicar laudo_ (com confirmação). Os campos travam e aparece a data de publicação.
+3. **Paciente** — saia e entre como `joao@demo.local`: o Ultrassom agora mostra **Laudo disponível**; abra e leia. Entre como `maria@demo.local`: ela não vê nada do João.
+4. **Publicado não cancela** — como clínica, abra A: _Cancelar agendamento_ está bloqueado (a API também recusa: 409 `APPOINTMENT_HAS_PUBLISHED_REPORT`).
+5. **Horários** — _Novo agendamento_ para **amanhã**: 10:00 aparece ocupado (E); 09:00 está livre porque D foi cancelado; horários de hoje que já passaram aparecem riscados.
+6. **Concorrência** — `pnpm demo:race`: 10 reservas simultâneas, 1 aceita e 9 × 409.
+7. **API direto** — [`docs/api/api.http`](docs/api/api.http) (REST Client): paciente lendo laudo de outro → 404; perfil errado → 403; sem login → 401; campo extra → 400; `traceId` = `x-request-id`.
+8. **Fuso** — os horários são sempre de Brasília: mude o fuso do computador e recarregue, ou veja o teste E2E que roda o navegador em `Asia/Tokyo`.
+9. **Visual** — alterne claro/escuro no canto da tela; abra no celular (ou DevTools em 390 px).
 
 ## Decisões técnicas
 
@@ -125,7 +159,26 @@ Datas armazenadas em UTC (`timestamptz`). Exibição e cálculo de "dia" sempre 
 
 ## Limitações e pendências
 
-_A completar._ Ver também "Pendências para produção" em `docs/SEGURANCA.md`.
+**Limitações conscientes (do escopo)**
+
+- Uma sala e horários fixos de 30 min (enunciado). Várias salas: `room_id` no índice único; duração variável: _exclusion constraint_ com `tstzrange` (ADR-003).
+- Mesmo horário de funcionamento todos os dias, inclusive fim de semana; sem feriados.
+- `chk_slot_aligned` alinha em UTC — correto para Brasília (offset em horas inteiras), não para fusos de meia hora.
+- Pacientes e tipos de exame vêm do seed (não há telas de cadastro); não é possível excluir rascunho (INTERPRETACOES.md #5 e #8).
+- Listagem da clínica sem paginação: até 100 agendamentos por consulta (com filtro por dia isso basta).
+- Sessão JWT não é revogável antes de expirar (8 h); o perfil é conferido no banco a cada requisição.
+- Rate limit do login em memória (vale para uma instância da API).
+
+**Pendências (cortadas pelo prazo, na ordem do plano)**
+
+- Swagger/OpenAPI em `/docs` e `/health/ready` (com checagem do banco).
+- Checagem explícita de `Origin` contra CSRF: hoje a proteção é `SameSite=Lax` + mutações só em JSON (formulário de outro site não envia `application/json` sem passar pelo CORS).
+- CSP no nginx do front (o helmet cobre só a API).
+- Testes de componente do front (as telas são cobertas pelo E2E; unitário só das mensagens).
+- Teste de mutação (Stryker) no domínio.
+- 3 alertas moderados do `pnpm audit`, todos em ferramentas de desenvolvimento (ver `docs/SEGURANCA.md`).
+
+Pendências para produção (revogação de sessão, MFA, auditoria de leitura, backups, retenção/LGPD): `docs/SEGURANCA.md`.
 
 ## Tempo dedicado
 
