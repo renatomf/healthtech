@@ -165,7 +165,7 @@ POST /auth/login · POST /auth/logout · GET /auth/me
 GET  /clinic/patients?search=
 GET  /clinic/exam-types
 GET  /clinic/slots?date=YYYY-MM-DD
-GET  /clinic/appointments?date=&patientId=&cursor=&limit=
+GET  /clinic/appointments?date=&patientId=      (até 100, mais recentes primeiro)
 POST /clinic/appointments
 POST /clinic/appointments/:id/cancel
 GET  /clinic/appointments/:id                 (inclui laudo, rascunho ou publicado)
@@ -181,22 +181,24 @@ GET  /health/live · GET /health/ready · GET /docs (Swagger)
 
 ### Mapeamento de erros (Problem Details, RFC 9457, com `code` e `traceId`)
 
-| Origem                           | Postgres / domínio                         | HTTP | `code`                             |
-| -------------------------------- | ------------------------------------------ | ---- | ---------------------------------- |
-| Slot ocupado                     | `23505` em `uq_active_slot`                | 409  | `SLOT_UNAVAILABLE`                 |
-| Slot desalinhado                 | `23514` em `chk_slot_aligned` ou validação | 422  | `SLOT_NOT_ALIGNED`                 |
-| Horário no passado               | domínio                                    | 422  | `SLOT_IN_PAST`                     |
-| Fora do horário de funcionamento | domínio                                    | 422  | `SLOT_OUTSIDE_BUSINESS_HOURS`      |
-| Laudo duplicado                  | `23505` em `uq_report_appointment`         | 409  | `REPORT_ALREADY_EXISTS`            |
-| Laudo publicado alterado         | domínio ou trigger `P0001`                 | 409  | `REPORT_ALREADY_PUBLISHED`         |
-| Laudo em agendamento cancelado   | domínio                                    | 409  | `APPOINTMENT_CANCELED`             |
-| Cancelar com laudo publicado     | domínio                                    | 409  | `APPOINTMENT_HAS_PUBLISHED_REPORT` |
-| Não encontrado / sem acesso      | —                                          | 404  | `NOT_FOUND`                        |
-| Perfil errado                    | —                                          | 403  | `FORBIDDEN`                        |
-| Sem autenticação                 | —                                          | 401  | `UNAUTHENTICATED`                  |
-| Login inválido (e-mail ou senha) | —                                          | 401  | `INVALID_CREDENTIALS`              |
-| Corpo inválido / campo extra     | Zod                                        | 400  | `VALIDATION_ERROR`                 |
-| Excesso de tentativas de login   | rate limit                                 | 429  | `RATE_LIMITED`                     |
+| Origem                                | Postgres / domínio                         | HTTP | `code`                                      |
+| ------------------------------------- | ------------------------------------------ | ---- | ------------------------------------------- |
+| Slot ocupado                          | `23505` em `uq_active_slot`                | 409  | `SLOT_UNAVAILABLE`                          |
+| Slot desalinhado                      | `23514` em `chk_slot_aligned` ou validação | 422  | `SLOT_NOT_ALIGNED`                          |
+| Horário no passado                    | domínio                                    | 422  | `SLOT_IN_PAST`                              |
+| Fora do horário de funcionamento      | domínio                                    | 422  | `SLOT_OUTSIDE_BUSINESS_HOURS`               |
+| Laudo duplicado                       | `23505` em `uq_report_appointment`         | 409  | `REPORT_ALREADY_EXISTS`                     |
+| Laudo publicado alterado              | domínio ou trigger `P0001`                 | 409  | `REPORT_ALREADY_PUBLISHED`                  |
+| Laudo em agendamento cancelado        | domínio                                    | 409  | `APPOINTMENT_CANCELED`                      |
+| Cancelar com laudo publicado          | domínio                                    | 409  | `APPOINTMENT_HAS_PUBLISHED_REPORT`          |
+| Cancelar agendamento já cancelado     | domínio                                    | 409  | `APPOINTMENT_ALREADY_CANCELED`              |
+| Paciente ou tipo de exame inexistente | aplicação                                  | 422  | `PATIENT_NOT_FOUND` / `EXAM_TYPE_NOT_FOUND` |
+| Não encontrado / sem acesso           | —                                          | 404  | `NOT_FOUND`                                 |
+| Perfil errado                         | —                                          | 403  | `FORBIDDEN`                                 |
+| Sem autenticação                      | —                                          | 401  | `UNAUTHENTICATED`                           |
+| Login inválido (e-mail ou senha)      | —                                          | 401  | `INVALID_CREDENTIALS`                       |
+| Corpo inválido / campo extra          | Zod                                        | 400  | `VALIDATION_ERROR`                          |
+| Excesso de tentativas de login        | rate limit                                 | 429  | `RATE_LIMITED`                              |
 
 O front decide a mensagem pelo `code`, nunca pelo texto.
 

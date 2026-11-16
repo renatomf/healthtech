@@ -28,6 +28,7 @@
 | 4   | Etapa 3 do Dia 1        | "siga em frente"                                                                                                                     | Schema Drizzle, migrations (gerada + trigger), Testcontainers e 15 testes de constraints; porta do banco movida para 55432 por conflito com Postgres local |
 | 5   | Revisão de estilo       | "até aqui está muito overengineering" / "o código é compreensível ou muito feito por IA?" / "siga simples da maneira que planejamos" | Limpeza (−600 linhas) e seed com utilitários de fuso testados antes (TDD)                                                                                  |
 | 6   | Autenticação            | "siga" (direto no `main`)                                                                                                            | Testes de login, me, logout, rate limit e perfil conferido no banco escritos antes; depois o módulo `identity`                                             |
+| 7   | Agendamentos            | "próxima etapa"                                                                                                                      | Commit vermelho dos cenários 1 e 5; depois domínio (TDD), repositório, casos de uso e rotas `/clinic`; testado também com `TZ=Asia/Tokyo`                  |
 
 ## Onde a IA errou e como foi corrigido
 

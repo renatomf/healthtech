@@ -12,8 +12,10 @@ import {
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 import type { Db } from './db/client.ts';
-import { AUTH_COOKIE } from './modules/identity/http/auth-hooks.ts';
+import { AUTH_COOKIE, authenticate, requireRole } from './modules/identity/http/auth-hooks.ts';
 import { authRoutes } from './modules/identity/http/auth-routes.ts';
+import { patientRoutes } from './modules/identity/http/patient-routes.ts';
+import { schedulingRoutes } from './modules/scheduling/http/scheduling-routes.ts';
 import { type Clock, systemClock } from './shared/clock.ts';
 import type { Env } from './shared/env.ts';
 import { registerErrorHandler } from './shared/errors.ts';
@@ -56,6 +58,23 @@ export function buildApp({ env, db, clock = systemClock, logger = false }: AppDe
     }));
 
   app.register(authRoutes(db, env));
+
+  const hours = {
+    open: env.CLINIC_OPEN_TIME,
+    close: env.CLINIC_CLOSE_TIME,
+    timeZone: env.CLINIC_TIMEZONE,
+  };
+
+  // Toda rota registrada aqui dentro exige login com perfil CLINIC.
+  app.register(
+    async (clinic) => {
+      clinic.addHook('onRequest', authenticate(db));
+      clinic.addHook('onRequest', requireRole('CLINIC'));
+      clinic.register(patientRoutes(db));
+      clinic.register(schedulingRoutes({ db, clock, hours }));
+    },
+    { prefix: '/clinic' },
+  );
 
   return app;
 }
