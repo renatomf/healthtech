@@ -24,4 +24,20 @@ describe('API', () => {
       traceId: res.headers['x-request-id'],
     });
   });
+
+  it('CORS libera o PUT do laudo para o front (pré-checagem do navegador)', async () => {
+    const res = await app.inject({
+      method: 'OPTIONS',
+      url: '/clinic/appointments/x/report',
+      headers: {
+        origin: 'http://localhost:5173',
+        'access-control-request-method': 'PUT',
+        'access-control-request-headers': 'content-type',
+      },
+    });
+
+    expect(res.statusCode).toBe(204);
+    expect(res.headers['access-control-allow-methods']).toContain('PUT');
+    expect(res.headers['access-control-allow-credentials']).toBe('true');
+  });
 });

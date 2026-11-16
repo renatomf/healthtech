@@ -43,7 +43,12 @@ export function buildApp({ env, db, clock = systemClock, logger = false }: AppDe
   });
 
   app.register(helmet);
-  app.register(cors, { origin: env.WEB_ORIGIN, credentials: true });
+  // O padrão do @fastify/cors libera só GET/HEAD/POST; o PUT do laudo precisa estar na lista.
+  app.register(cors, {
+    origin: env.WEB_ORIGIN,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT'],
+  });
   app.register(cookie);
   app.register(jwt, {
     secret: env.JWT_SECRET,
