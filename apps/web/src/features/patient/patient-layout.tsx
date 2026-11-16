@@ -8,7 +8,7 @@ export function PatientLayout() {
   return (
     <div className="mx-auto min-h-dvh max-w-2xl px-4 pb-12 sm:px-6">
       <header className="flex items-center justify-between py-4">
-        <Link to="/paciente" aria-label="Início">
+        <Link to="/paciente">
           <Brand />
         </Link>
         <div className="flex items-center gap-2">

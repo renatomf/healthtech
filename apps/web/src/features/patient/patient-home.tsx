@@ -50,7 +50,7 @@ export function PatientHome() {
             <CalendarClock className="size-4" aria-hidden />
             {formatClinicDateTime(next.scheduledAt, "EEEE, d 'de' MMMM 'às' HH:mm")}
           </p>
-          <p className="mt-1 text-xs opacity-80">Horário de Brasília</p>
+          <p className="mt-1 text-xs">Horário de Brasília</p>
         </section>
       )}
 
@@ -99,7 +99,6 @@ export function PatientHome() {
                   {a.hasPublishedReport ? (
                     <Link
                       to={`/paciente/exames/${a.id}/laudo`}
-                      aria-label={`Ler laudo de ${a.examType.name}, ${formatClinicDateTime(a.scheduledAt)}`}
                       className={cn(box, 'transition hover:bg-surface-muted')}
                     >
                       {content}

@@ -1,0 +1,18 @@
+{
+  "name": "@healthtech/e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@date-fns/tz": "^1.5.0",
+    "@healthtech/shared": "workspace:*",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "date-fns": "^4.4.0"
+  }
+}

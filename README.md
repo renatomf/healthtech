@@ -86,7 +86,7 @@ docker compose exec api node src/db/seed.ts   # com Docker
 
 ## Testes
 
-`pnpm test:unit` (rápido, sem Docker) · `pnpm test:integration` (Postgres real via Testcontainers, exige Docker) · `pnpm test` (ambos) · `pnpm verify` (lint + typecheck + depcruise + testes). _A completar:_ `pnpm test:e2e`.
+`pnpm test:unit` (rápido, sem Docker) · `pnpm test:integration` (Postgres real via Testcontainers, exige Docker) · `pnpm test` (ambos) · `pnpm verify` (lint + typecheck + depcruise + testes). `pnpm test:e2e` (Playwright + axe; exige o stack de pé com `docker compose up -d` e o Google Chrome instalado; reseta o banco antes).
 
 ## Variáveis de ambiente
 

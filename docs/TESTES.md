@@ -51,7 +51,7 @@ Unitários provam regras de domínio; integração com Postgres real prova conco
 2. Laudo do rascunho ao paciente: cria rascunho → publica (confirma) → paciente vê selo e lê.
 3. Regras visíveis: cancelar com laudo publicado bloqueado; slot ocupado desabilitado.
 
-Seletores por papel/rótulo; `pnpm db:reset` antes; `trace: 'on-first-retry'`; relatório HTML como artefato no CI.
+Seletores por papel/rótulo; `pnpm db:reset` antes (global-setup); `trace: 'retain-on-failure'`; relatório HTML como artefato no CI. Roda contra o stack do Docker Compose com o Chrome instalado (`channel: 'chrome'`, sem baixar navegador) e o navegador em `Asia/Tokyo`, para provar que a tela usa o fuso da clínica. axe em todas as telas principais, nos temas claro e escuro.
 
 ## Padrões
 
