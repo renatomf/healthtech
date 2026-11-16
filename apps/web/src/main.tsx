@@ -11,6 +11,8 @@ import { AppointmentPage } from './features/clinic/appointment-page.tsx';
 import { ClinicLayout } from './features/clinic/clinic-layout.tsx';
 import { NewAppointmentPage } from './features/clinic/new-appointment-page.tsx';
 import { PatientHome } from './features/patient/patient-home.tsx';
+import { PatientLayout } from './features/patient/patient-layout.tsx';
+import { ReportPage } from './features/patient/report-page.tsx';
 import { ApiError } from './lib/api.ts';
 
 // 401 em qualquer chamada: a sessão acabou; RequireRole manda para o login.
@@ -44,9 +46,13 @@ const router = createBrowserRouter([
     path: '/paciente',
     element: (
       <RequireRole profile="PATIENT">
-        <PatientHome />
+        <PatientLayout />
       </RequireRole>
     ),
+    children: [
+      { index: true, element: <PatientHome /> },
+      { path: 'exames/:id/laudo', element: <ReportPage /> },
+    ],
   },
   { path: '*', element: <HomeRedirect /> },
 ]);
