@@ -32,13 +32,13 @@ cp .env.example .env
 docker compose up --build -d
 ```
 
-| Serviço    | Endereço                               |
-| ---------- | -------------------------------------- |
-| Web        | http://localhost:5173                  |
-| API        | http://localhost:3333 (`/health/live`) |
-| PostgreSQL | `localhost:5432`                       |
+| Serviço    | Endereço                                 |
+| ---------- | ---------------------------------------- |
+| Web        | http://localhost:5173                    |
+| API        | http://localhost:3333 (`/health/live`)   |
+| PostgreSQL | `localhost:55432` (`POSTGRES_HOST_PORT`) |
 
-A API valida o `.env` com Zod ao iniciar e não sobe se algo estiver inválido (lista as variáveis com problema, sem repetir valores).
+A API aplica as migrations pendentes e valida o `.env` com Zod ao iniciar; não sobe se algo estiver inválido (lista as variáveis com problema, sem repetir valores). O banco usa a porta 55432 no host para não colidir com um Postgres já instalado na máquina.
 
 **Local (desenvolvimento)**
 
@@ -46,14 +46,18 @@ A API valida o `.env` com Zod ao iniciar e não sobe se algo estiver inválido (
 cp .env.example .env
 pnpm install
 docker compose up -d db
+pnpm db:migrate
 pnpm dev            # API (node --watch) + web (Vite)
 ```
 
-_A completar:_ migrations e seed (próximas tarefas).
-
 ## Banco e dados fictícios
 
-_A completar:_ `pnpm db:migrate`, `pnpm db:seed`, `pnpm db:reset`. O seed é **relativo à data atual**.
+| Comando            | O que faz                                                                             |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| `pnpm db:migrate`  | Aplica as migrations versionadas (`apps/api/src/db/migrations`)                       |
+| `pnpm db:generate` | Gera migration a partir de `schema.ts` (só desenvolvimento; nunca `drizzle-kit push`) |
+
+_A completar:_ `pnpm db:seed`, `pnpm db:reset`. O seed é **relativo à data atual**.
 
 ## Contas de demonstração
 
@@ -65,7 +69,7 @@ _A completar:_ `pnpm db:migrate`, `pnpm db:seed`, `pnpm db:reset`. O seed é **r
 
 ## Testes
 
-_A completar:_ `pnpm test`, `pnpm test:unit`, `pnpm test:e2e`, `pnpm verify`. Docker é necessário (Testcontainers).
+`pnpm test:unit` (rápido, sem Docker) · `pnpm test:integration` (Postgres real via Testcontainers, exige Docker) · `pnpm test` (ambos) · `pnpm verify` (lint + typecheck + depcruise + testes). _A completar:_ `pnpm test:e2e`.
 
 ## Variáveis de ambiente
 

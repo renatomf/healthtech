@@ -10,12 +10,15 @@
     "dev": "pnpm --parallel --filter \"./apps/*\" dev",
     "docker:up": "docker compose up --build -d",
     "docker:down": "docker compose down",
+    "db:generate": "pnpm --filter @healthtech/api db:generate",
+    "db:migrate": "pnpm --filter @healthtech/api db:migrate",
     "lint": "biome check .",
     "format": "biome check --write .",
     "typecheck": "pnpm -r typecheck",
     "depcruise": "depcruise apps packages --config .dependency-cruiser.cjs",
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
     "verify": "pnpm lint && pnpm typecheck && pnpm depcruise && pnpm test"
   },
   "devDependencies": {

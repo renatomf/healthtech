@@ -74,43 +74,59 @@ erDiagram
   APPOINTMENTS ||--o| REPORTS : "laudo"
 ```
 
-### Constraints (migration SQL customizada)
+### Constraints
+
+Índices e CHECKs são declarados no schema Drizzle (`apps/api/src/db/schema.ts`) e gerados por `drizzle-kit generate` (`0000_initial_schema.sql`); assim o schema TS e o banco não divergem. Só o trigger é SQL customizado (`0001_report_immutable_trigger.sql`). Cada item tem teste em `apps/api/src/db/constraints.int.test.ts`.
 
 ```sql
 -- No máximo um agendamento ativo por horário; horário de cancelado é reutilizável
 CREATE UNIQUE INDEX uq_active_slot
   ON appointments (scheduled_at) WHERE status = 'SCHEDULED';
 
--- Slots fixos de 30 min, sem segundos
-ALTER TABLE appointments ADD CONSTRAINT chk_slot_aligned CHECK (
-  date_trunc('minute', scheduled_at) = scheduled_at
-  AND extract(minute FROM scheduled_at) IN (0, 30)
+-- Slots fixos de 30 min, sem segundos — avaliado em UTC (independe do TimeZone da sessão)
+CONSTRAINT chk_slot_aligned CHECK (
+  date_trunc('minute', scheduled_at AT TIME ZONE 'UTC') = scheduled_at AT TIME ZONE 'UTC'
+  AND extract(minute FROM scheduled_at AT TIME ZONE 'UTC') IN (0, 30)
+);
+
+-- Cancelado se e somente se há canceled_at e canceled_by
+CONSTRAINT chk_canceled CHECK (
+  (status = 'CANCELED') = (canceled_at IS NOT NULL AND canceled_by IS NOT NULL)
+  AND (canceled_at IS NULL) = (canceled_by IS NULL)
 );
 
 -- Um laudo por agendamento
-ALTER TABLE reports ADD CONSTRAINT uq_report_appointment UNIQUE (appointment_id);
+CONSTRAINT uq_report_appointment UNIQUE (appointment_id);
 
--- published_at presente se e somente se publicado
-ALTER TABLE reports ADD CONSTRAINT chk_published CHECK (
+-- published_at (e published_by) presentes se e somente se publicado
+CONSTRAINT chk_published CHECK (
   (status = 'PUBLISHED') = (published_at IS NOT NULL)
+  AND (published_at IS NULL) = (published_by IS NULL)
 );
 
--- Laudo publicado é imutável mesmo via SQL direto
-CREATE FUNCTION forbid_published_report_update() RETURNS trigger AS $$
+-- Limite do texto do laudo (API4) e e-mail normalizado
+CONSTRAINT chk_report_body_length CHECK (char_length(body) <= 20000);
+CONSTRAINT chk_users_email_lowercase CHECK (email = lower(email));
+
+-- Laudo publicado é imutável mesmo via SQL direto (UPDATE e DELETE)
+CREATE FUNCTION forbid_published_report_change() RETURNS trigger AS $$
 BEGIN
   IF OLD.status = 'PUBLISHED' THEN
-    RAISE EXCEPTION 'published report is immutable' USING ERRCODE = 'P0001';
+    RAISE EXCEPTION 'published report is immutable'
+      USING ERRCODE = 'P0001', CONSTRAINT = 'trg_report_immutable';
   END IF;
+  IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
   RETURN NEW;
 END $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_report_immutable BEFORE UPDATE ON reports
-  FOR EACH ROW EXECUTE FUNCTION forbid_published_report_update();
+CREATE TRIGGER trg_report_immutable BEFORE UPDATE OR DELETE ON reports
+  FOR EACH ROW EXECUTE FUNCTION forbid_published_report_change();
 
 CREATE INDEX idx_appt_patient ON appointments (patient_id, scheduled_at DESC);
+CREATE INDEX idx_appt_scheduled_at ON appointments (scheduled_at); -- filtro por dia inclui cancelados
 ```
 
-- `chk_slot_aligned` é seguro em UTC porque `America/Sao_Paulo` tem offset em horas inteiras (limitação documentada para fusos de meia hora).
+- `chk_slot_aligned` é avaliado em UTC, então não depende do `TimeZone` da sessão (testado com `Asia/Kathmandu`, +05:45). Alinhar em UTC equivale a alinhar em `America/Sao_Paulo` porque o offset é de horas inteiras; para uma clínica num fuso de meia hora, a grade teria de ser calculada no fuso da clínica (limitação documentada).
 - "Não agendar no passado" não pode ser CHECK (seria avaliado só na escrita e ficaria falso com o tempo): fica no domínio com `Clock` injetado.
 
 ## Concorrência e consistência

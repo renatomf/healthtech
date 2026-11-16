@@ -22,7 +22,8 @@ WORKDIR /app/apps/api
 EXPOSE 3333
 HEALTHCHECK --interval=10s --timeout=3s --retries=5 \
   CMD wget -qO- http://127.0.0.1:${API_PORT:-3333}/health/live || exit 1
-CMD ["node", "src/server.ts"]
+# Aplica migrations pendentes e sobe a API.
+CMD ["sh", "-c", "node src/db/migrate.ts && exec node src/server.ts"]
 
 # ---------- Web: build estático do Vite
 FROM base AS web-build
