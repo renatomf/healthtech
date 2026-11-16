@@ -14,16 +14,18 @@ import {
 import type { Db } from './db/client.ts';
 import { AUTH_COOKIE } from './modules/identity/http/auth-hooks.ts';
 import { authRoutes } from './modules/identity/http/auth-routes.ts';
+import { type Clock, systemClock } from './shared/clock.ts';
 import type { Env } from './shared/env.ts';
 import { registerErrorHandler } from './shared/errors.ts';
 
 export interface AppDeps {
   env: Env;
   db: Db;
+  clock?: Clock;
   logger?: FastifyServerOptions['logger'];
 }
 
-export function buildApp({ env, db, logger = false }: AppDeps) {
+export function buildApp({ env, db, clock = systemClock, logger = false }: AppDeps) {
   const app = Fastify({
     logger,
     bodyLimit: 100 * 1024,

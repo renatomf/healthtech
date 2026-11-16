@@ -2,17 +2,18 @@ import type { FastifyInstance } from 'fastify';
 import { inject } from 'vitest';
 import { buildApp } from '../src/app.ts';
 import type { Db } from '../src/db/client.ts';
+import { type Clock, systemClock } from '../src/shared/clock.ts';
 import { loadEnv } from '../src/shared/env.ts';
 import { TEST_PASSWORD } from './factories.ts';
 
-export function buildTestApp(db: Db) {
+export function buildTestApp(db: Db, clock: Clock = systemClock) {
   const env = loadEnv({
     NODE_ENV: 'test',
     DATABASE_URL: inject('databaseUrl'),
     JWT_SECRET: 'segredo-de-teste-com-mais-de-32-caracteres',
     WEB_ORIGIN: 'http://localhost:5173',
   });
-  return buildApp({ env, db });
+  return buildApp({ env, db, clock });
 }
 
 /** Faz login e devolve o cookie para usar nas próximas requisições. */
