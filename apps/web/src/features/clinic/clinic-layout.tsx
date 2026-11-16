@@ -14,8 +14,8 @@ export function ClinicLayout() {
   const logout = useLogout();
 
   return (
-    <div className="min-h-dvh p-3 lg:grid lg:grid-cols-[15rem_1fr] lg:gap-3">
-      <aside className="flex items-center justify-between gap-3 rounded-4xl bg-surface px-4 py-3 lg:sticky lg:top-3 lg:h-[calc(100dvh-1.5rem)] lg:flex-col lg:items-stretch lg:justify-start lg:p-6">
+    <div className="min-h-dvh lg:grid lg:grid-cols-[16rem_1fr]">
+      <aside className="flex items-center justify-between gap-4 border-b border-border bg-surface px-4 py-3 lg:sticky lg:top-0 lg:h-dvh lg:flex-col lg:items-stretch lg:justify-start lg:border-r lg:border-b-0 lg:p-6">
         <Brand />
         <nav aria-label="Principal" className="flex gap-1 lg:mt-12 lg:flex-col">
           {NAV.map(({ to, label, icon: Icon, end }) => (
@@ -55,7 +55,7 @@ export function ClinicLayout() {
           </div>
         </div>
       </aside>
-      <main className="mx-auto w-full max-w-7xl px-2 py-6 sm:px-6 lg:py-8">
+      <main className="mx-auto w-full max-w-7xl p-4 sm:p-8">
         <Outlet />
       </main>
     </div>
