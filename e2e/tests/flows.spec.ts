@@ -66,3 +66,13 @@ test('horários aparecem em Brasília mesmo com o navegador em outro fuso', asyn
   // Navegador em Asia/Tokyo (playwright.config.ts); o exame E é às 10:00 de Brasília.
   await expect(page.getByText(/às 10:00/).first()).toBeVisible();
 });
+
+test.describe('tema', () => {
+  test.use({ colorScheme: 'dark' });
+
+  test('abre no tema claro mesmo com o sistema em modo escuro', async ({ page }) => {
+    await page.goto('/login');
+
+    await expect(page.locator('html')).not.toHaveClass(/dark/);
+  });
+});

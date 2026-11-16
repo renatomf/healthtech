@@ -222,7 +222,8 @@ Referências do autor: imagens do site DocShield (paleta, tipografia, botões) e
 - **Tipografia:** Geist (grotesca próxima à do DocShield), títulos grandes em peso leve (300) com `tracking-tight` e **em dois tons** (primeira parte marinho, continuação em cinza: "Agenda / domingo, 15 de novembro"); números de resumo grandes e leves; rótulos pequenos (13 px) em cinza.
 - **Componentes:** botões e chips em pílula (`rounded-full`), cards `rounded-4xl` (28 px) sem borda nem sombra, linhas internas em azul-pálido, campos preenchidos em azul-pálido (sem borda), ícones de linha finos (lucide, traço 1,5) dentro de círculos, navegação do paciente em barra flutuante em pílula. Degradê suave só nos cards de destaque (login, primeiro indicador, próximo exame, cabeçalho do laudo).
 - **Layout da clínica (painel, estilo iMed):** sidebar à esquerda (Agenda, Novo agendamento), área central com cards-resumo do dia e lista de agendamentos, coluna direita com calendário. Mobile: sidebar vira barra superior, colunas empilham.
+- **Marca:** ícone de coração com linha de batimento (lucide `HeartPulse`, traço fino) + "HealthTech" em peso leve.
 - **Paciente:** mobile-first, card do próximo exame em destaque e lista de exames com selo "Laudo disponível".
-- **Light / dark:** alternância manual no cabeçalho, padrão por `prefers-color-scheme`, preferência em `localStorage` (conveniência visual). Dark: fundo marinho `#070D24`, cards `#0E1735` com borda translúcida, mesmo azul de ação.
+- **Light / dark:** **claro por padrão** (não segue o tema do sistema, a pedido do autor); escuro só quando escolhido no botão do cabeçalho, com a escolha salva em `localStorage` (conveniência visual). Dark: fundo marinho `#070D24`, cards `#0E1735` com borda translúcida, mesmo azul de ação.
 - **Tokens** de cor como variáveis CSS (`:root` e `.dark`); componentes não usam cor literal.
 - Contraste AA nos dois temas (verificado pelo axe no E2E).

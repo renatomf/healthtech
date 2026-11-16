@@ -12,7 +12,10 @@ async function expectAccessible(page: Page, screen: string) {
 
 for (const theme of ['light', 'dark'] as const) {
   test.describe(`acessibilidade (tema ${theme === 'light' ? 'claro' : 'escuro'})`, () => {
-    test.use({ colorScheme: theme });
+    // O tema vem da escolha salva pela pessoa (o padrão é claro, sem seguir o sistema).
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript((t) => localStorage.setItem('theme', t), theme);
+    });
 
     test('login', async ({ page }) => {
       await page.goto('/login');

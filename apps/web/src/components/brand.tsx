@@ -1,4 +1,4 @@
-import { Moon, Shield, Sun } from 'lucide-react';
+import { HeartPulse, Moon, Sun } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { cn } from '../lib/cn.ts';
 import { useTheme } from '../lib/theme.ts';
@@ -11,7 +11,7 @@ export function Brand({ inverted = false }: { inverted?: boolean }) {
         inverted && 'text-white',
       )}
     >
-      <Shield className="size-5" strokeWidth={1.5} aria-hidden />
+      <HeartPulse className="size-5" strokeWidth={1.5} aria-hidden />
       HealthTech
     </span>
   );
