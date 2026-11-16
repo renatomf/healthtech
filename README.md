@@ -47,6 +47,7 @@ cp .env.example .env
 pnpm install
 docker compose up -d db
 pnpm db:migrate
+pnpm db:seed
 pnpm dev            # API (node --watch) + web (Vite)
 ```
 
@@ -55,9 +56,25 @@ pnpm dev            # API (node --watch) + web (Vite)
 | Comando            | O que faz                                                                             |
 | ------------------ | ------------------------------------------------------------------------------------- |
 | `pnpm db:migrate`  | Aplica as migrations versionadas (`apps/api/src/db/migrations`)                       |
+| `pnpm db:seed`     | Recria os dados fictícios                                                             |
+| `pnpm db:reset`    | Apaga o banco, aplica as migrations e roda o seed                                     |
 | `pnpm db:generate` | Gera migration a partir de `schema.ts` (só desenvolvimento; nunca `drizzle-kit push`) |
 
-_A completar:_ `pnpm db:seed`, `pnpm db:reset`. O seed é **relativo à data atual**.
+O seed apaga os dados e recria tudo com datas **relativas a hoje** (fuso da clínica), então funciona em qualquer dia:
+
+```bash
+pnpm db:seed                                  # local
+docker compose exec api node src/db/seed.ts   # com Docker
+```
+
+| Agendamento | Paciente | Quando                 | Estado                                    |
+| ----------- | -------- | ---------------------- | ----------------------------------------- |
+| A           | João     | ontem 10:00            | agendado, laudo publicado                 |
+| B           | João     | ontem 14:00            | agendado, laudo em rascunho               |
+| C           | Maria    | ontem 11:00            | agendado, laudo publicado                 |
+| D           | Maria    | amanhã 09:00           | cancelado (horário livre para reutilizar) |
+| E           | João     | amanhã 10:00           | agendado (horário ocupado)                |
+| F           | Maria    | depois de amanhã 15:30 | agendado                                  |
 
 ## Contas de demonstração
 

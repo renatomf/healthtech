@@ -12,6 +12,8 @@
     "docker:down": "docker compose down",
     "db:generate": "pnpm --filter @healthtech/api db:generate",
     "db:migrate": "pnpm --filter @healthtech/api db:migrate",
+    "db:seed": "pnpm --filter @healthtech/api db:seed",
+    "db:reset": "pnpm --filter @healthtech/api db:reset",
     "lint": "biome check .",
     "format": "biome check --write .",
     "typecheck": "pnpm -r typecheck",
