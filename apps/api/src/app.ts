@@ -1,13 +1,20 @@
 import { healthLiveResponse } from '@healthtech/shared';
-import Fastify, { type FastifyInstance } from 'fastify';
+import Fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import {
   serializerCompiler,
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 
-export function buildApp(): FastifyInstance {
-  const app = Fastify({ logger: false });
+export interface BuildAppOptions {
+  logger?: FastifyServerOptions['logger'];
+}
+
+export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
+  const app = Fastify({
+    logger: options.logger ?? false,
+    bodyLimit: 100 * 1024, // SEGURANCA.md — API4
+  });
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 

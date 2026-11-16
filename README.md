@@ -23,7 +23,33 @@ Aplicação web para uma clínica agendar exames, cadastrar laudos (rascunho →
 
 ## Como executar
 
-_A completar:_ `docker compose up` (caminho principal) e modo local com `pnpm dev`. Requisitos: Docker, Node (ver `.nvmrc`), pnpm via Corepack.
+Requisitos: Docker; para o modo local, também Node 24 (ver `.nvmrc`) e pnpm via Corepack (`corepack enable`).
+
+**Com Docker (caminho principal)**
+
+```bash
+cp .env.example .env
+docker compose up --build -d
+```
+
+| Serviço    | Endereço                               |
+| ---------- | -------------------------------------- |
+| Web        | http://localhost:5173                  |
+| API        | http://localhost:3333 (`/health/live`) |
+| PostgreSQL | `localhost:5432`                       |
+
+A API valida o `.env` com Zod ao iniciar e não sobe se algo estiver inválido (lista as variáveis com problema, sem repetir valores).
+
+**Local (desenvolvimento)**
+
+```bash
+cp .env.example .env
+pnpm install
+docker compose up -d db
+pnpm dev            # API (node --watch) + web (Vite)
+```
+
+_A completar:_ migrations e seed (próximas tarefas).
 
 ## Banco e dados fictícios
 
