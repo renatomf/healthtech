@@ -13,7 +13,7 @@ export interface BuildAppOptions {
 export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   const app = Fastify({
     logger: options.logger ?? false,
-    bodyLimit: 100 * 1024, // SEGURANCA.md — API4
+    bodyLimit: 100 * 1024,
   });
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);

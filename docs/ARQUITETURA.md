@@ -74,26 +74,26 @@ erDiagram
   APPOINTMENTS ||--o| REPORTS : "laudo"
 ```
 
-### Constraints (migration SQL customizada)
+### Constraints
+
+Índices e CHECKs ficam no schema Drizzle (`apps/api/src/db/schema.ts`) e são gerados por `drizzle-kit generate`; só o trigger é SQL escrito à mão (`0001_report_immutable_trigger.sql`). Testes em `apps/api/src/db/constraints.int.test.ts`.
 
 ```sql
 -- No máximo um agendamento ativo por horário; horário de cancelado é reutilizável
 CREATE UNIQUE INDEX uq_active_slot
   ON appointments (scheduled_at) WHERE status = 'SCHEDULED';
 
--- Slots fixos de 30 min, sem segundos
-ALTER TABLE appointments ADD CONSTRAINT chk_slot_aligned CHECK (
-  date_trunc('minute', scheduled_at) = scheduled_at
-  AND extract(minute FROM scheduled_at) IN (0, 30)
+-- Slots fixos de 30 min, sem segundos (em UTC, para não depender do TimeZone da sessão)
+CONSTRAINT chk_slot_aligned CHECK (
+  date_trunc('minute', scheduled_at AT TIME ZONE 'UTC') = scheduled_at AT TIME ZONE 'UTC'
+  AND extract(minute FROM scheduled_at AT TIME ZONE 'UTC') IN (0, 30)
 );
 
 -- Um laudo por agendamento
-ALTER TABLE reports ADD CONSTRAINT uq_report_appointment UNIQUE (appointment_id);
+CONSTRAINT uq_report_appointment UNIQUE (appointment_id);
 
 -- published_at presente se e somente se publicado
-ALTER TABLE reports ADD CONSTRAINT chk_published CHECK (
-  (status = 'PUBLISHED') = (published_at IS NOT NULL)
-);
+CONSTRAINT chk_published CHECK ((status = 'PUBLISHED') = (published_at IS NOT NULL));
 
 -- Laudo publicado é imutável mesmo via SQL direto
 CREATE FUNCTION forbid_published_report_update() RETURNS trigger AS $$
@@ -110,7 +110,7 @@ CREATE TRIGGER trg_report_immutable BEFORE UPDATE ON reports
 CREATE INDEX idx_appt_patient ON appointments (patient_id, scheduled_at DESC);
 ```
 
-- `chk_slot_aligned` é seguro em UTC porque `America/Sao_Paulo` tem offset em horas inteiras (limitação documentada para fusos de meia hora).
+- `chk_slot_aligned` em UTC equivale ao fuso da clínica porque `America/Sao_Paulo` tem offset em horas inteiras (limitação para fusos de meia hora).
 - "Não agendar no passado" não pode ser CHECK (seria avaliado só na escrita e ficaria falso com o tempo): fica no domínio com `Clock` injetado.
 
 ## Concorrência e consistência
