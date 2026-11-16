@@ -12,12 +12,12 @@ export function ReportPage() {
   const report = useMyReport(id);
 
   return (
-    <div className="space-y-6 pt-4">
+    <div className="space-y-8">
       <Link
         to="/paciente"
         className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground"
       >
-        <ArrowLeft className="size-4" aria-hidden /> Meus exames
+        <ArrowLeft className="size-4" strokeWidth={1.5} aria-hidden /> Meus exames
       </Link>
 
       {report.isPending && <Loading />}
@@ -31,21 +31,25 @@ export function ReportPage() {
         ))}
 
       {report.isSuccess && (
-        <article className="space-y-6">
-          <header className="rounded-3xl bg-linear-to-b from-hero-from to-hero-to p-6">
-            <p className="text-sm text-muted">Laudo</p>
-            <h1 className="mt-1 text-3xl font-light tracking-tight">{report.data.title}</h1>
-            <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-              <div>
-                <dt className="text-muted">Profissional responsável</dt>
-                <dd className="font-medium">{report.data.professionalName}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Publicado em</dt>
-                <dd className="font-medium">{formatClinicDateTime(report.data.publishedAt)}</dd>
-              </div>
-            </dl>
-          </header>
+        <article className="space-y-3">
+          <Card tone="hero" className="space-y-10">
+            <p className="text-sm">Laudo</p>
+            <h1 className="text-4xl leading-tight font-light tracking-tight sm:text-5xl">
+              {report.data.title}
+            </h1>
+          </Card>
+          <dl className="grid grid-cols-2 gap-3">
+            <div className="space-y-1 rounded-4xl bg-surface-muted p-6 sm:p-8">
+              <dt className="text-[13px] text-muted">Profissional responsável</dt>
+              <dd className="text-lg font-light tracking-tight">{report.data.professionalName}</dd>
+            </div>
+            <div className="space-y-1 rounded-4xl bg-surface-muted p-6 sm:p-8">
+              <dt className="text-[13px] text-muted">Publicado em</dt>
+              <dd className="text-lg font-light tracking-tight">
+                {formatClinicDateTime(report.data.publishedAt)}
+              </dd>
+            </div>
+          </dl>
           <Card>
             {/* Texto puro: o React escapa o conteúdo; quebras de linha preservadas. */}
             <p className="leading-relaxed whitespace-pre-wrap">{report.data.body}</p>

@@ -25,22 +25,24 @@ export function LoginPage() {
   const { errors } = form.formState;
 
   return (
-    <div className="grid min-h-dvh lg:grid-cols-2">
-      <aside className="hidden flex-col justify-between bg-linear-to-b from-hero-from to-hero-to p-12 lg:flex">
-        <Brand />
-        <div className="space-y-4">
-          <h1 className="max-w-md text-5xl leading-tight font-light tracking-tight">
-            Exames agendados, laudos no lugar certo.
+    <div className="grid min-h-dvh gap-3 p-3 lg:grid-cols-[1.1fr_1fr]">
+      <aside className="hidden flex-col justify-between rounded-4xl bg-linear-to-b from-hero-from to-hero-to p-12 text-white lg:flex">
+        <Brand inverted />
+        <div className="space-y-6">
+          <h1 className="max-w-2xl text-6xl leading-[1.05] font-light tracking-tight">
+            Exames agendados.
+            <br />
+            Laudos no lugar certo.
           </h1>
-          <p className="max-w-sm text-muted">
+          <p className="max-w-sm text-sm leading-relaxed">
             A clínica agenda e publica; o paciente acompanha seus exames e lê os laudos assim que
             ficam prontos.
           </p>
         </div>
-        <p className="text-xs text-muted">Horários exibidos no horário de Brasília.</p>
+        <p className="text-xs">Horários exibidos no horário de Brasília.</p>
       </aside>
 
-      <main className="flex flex-col p-6 sm:p-12">
+      <main className="flex flex-col rounded-4xl bg-surface p-6 sm:p-12">
         <div className="flex items-center justify-between">
           <span className="lg:invisible">
             <Brand />
@@ -48,16 +50,16 @@ export function LoginPage() {
           <ThemeToggle />
         </div>
 
-        <div className="m-auto w-full max-w-sm space-y-8 py-12">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-light tracking-tight">Entrar</h2>
+        <div className="m-auto w-full max-w-sm space-y-10 py-12">
+          <div className="space-y-3">
+            <h2 className="text-4xl font-light tracking-tight">Entrar</h2>
             <p className="text-sm text-muted">Use o e-mail e a senha da sua conta.</p>
           </div>
 
           <form
             noValidate
             onSubmit={form.handleSubmit((values) => login.mutate(values))}
-            className="space-y-4"
+            className="space-y-5"
           >
             <Field label="E-mail" error={errors.email && 'Informe um e-mail válido.'}>
               {(p) => (
@@ -80,12 +82,12 @@ export function LoginPage() {
             </Button>
           </form>
 
-          <div className="rounded-3xl bg-surface-muted p-5 text-sm">
-            <p className="font-medium">Contas de demonstração</p>
-            <p className="mb-3 text-muted">Senha de todas: Demo@1234</p>
-            <ul className="space-y-1">
+          <div className="rounded-3xl bg-surface-muted p-6 text-[13px]">
+            <p>Contas de demonstração</p>
+            <p className="mb-4 text-muted">Senha de todas: Demo@1234</p>
+            <ul className="divide-y divide-border">
               {DEMO.map(([label, email]) => (
-                <li key={email} className="flex justify-between gap-4">
+                <li key={email} className="flex justify-between gap-4 py-2">
                   <span className="text-muted">{label}</span>
                   <span>{email}</span>
                 </li>

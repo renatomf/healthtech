@@ -1,52 +1,53 @@
 @import "tailwindcss";
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/geist";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Direção de arte: DocShield — branco e azul-pálido, periwinkle, tipografia leve. */
 :root {
-  --background: #f3f6fc;
+  --background: #f6f8fc;
   --surface: #ffffff;
-  --surface-muted: #eef3fe;
-  --border: #e1e8f5;
-  --foreground: #0b1a4a;
-  --muted: #56627a;
-  --primary: #3d5fc4;
-  --primary-hover: #324fa8;
-  --primary-soft: #dde7fb;
+  --surface-muted: #eef3fd;
+  --border: #e3e9f6;
+  --foreground: #0b1638;
+  --muted: #566274;
+  --primary: #4566c0;
+  --primary-hover: #3a58aa;
+  --primary-soft: #d9e4fb;
   --primary-foreground: #ffffff;
-  --link: #3550b0;
-  --hero-from: #eaf1ff;
-  --hero-to: #c8d7f5;
+  --link: #3a58aa;
+  --hero-from: #4565bf;
+  --hero-to: #b3c6f0;
   --success: #116330;
-  --success-soft: #e3f5ea;
-  --warning: #9a4d04;
-  --warning-soft: #fdf1df;
-  --danger: #b42318;
-  --danger-soft: #fdecea;
-  --ring: #8ea9ec;
+  --success-soft: #e3f4ea;
+  --warning: #8f4704;
+  --warning-soft: #fcf0de;
+  --danger: #ac2318;
+  --danger-soft: #fcebe9;
+  --ring: #8fa8e8;
 }
 
 .dark {
-  --background: #070d24;
-  --surface: #0e1735;
-  --surface-muted: #14204a;
-  --border: rgb(255 255 255 / 0.08);
-  --foreground: #e6ebfa;
-  --muted: #a3afd0;
-  --primary: #3d5fc4;
-  --primary-hover: #4b6ed6;
-  --primary-soft: rgb(110 145 235 / 0.18);
+  --background: #060b1d;
+  --surface: #0d1631;
+  --surface-muted: #131f44;
+  --border: rgb(255 255 255 / 0.07);
+  --foreground: #e8edfb;
+  --muted: #a1add0;
+  --primary: #4566c0;
+  --primary-hover: #5576d0;
+  --primary-soft: rgb(120 150 235 / 0.18);
   --primary-foreground: #ffffff;
-  --link: #a9c0ff;
-  --hero-from: #1a2a5e;
-  --hero-to: #0e1735;
-  --success: #5ad48a;
-  --success-soft: rgb(90 212 138 / 0.12);
-  --warning: #f5c04e;
-  --warning-soft: rgb(245 192 78 / 0.12);
-  --danger: #f58a8a;
-  --danger-soft: rgb(245 138 138 / 0.12);
-  --ring: #6e91eb;
+  --link: #adc2ff;
+  --hero-from: #2a4190;
+  --hero-to: #101b3d;
+  --success: #6ad697;
+  --success-soft: rgb(106 214 151 / 0.12);
+  --warning: #f3c25a;
+  --warning-soft: rgb(243 194 90 / 0.12);
+  --danger: #f59a92;
+  --danger-soft: rgb(245 154 146 / 0.12);
+  --ring: #6f8fe6;
 }
 
 @theme inline {
@@ -70,7 +71,8 @@
   --color-ring: var(--ring);
   --color-hero-from: var(--hero-from);
   --color-hero-to: var(--hero-to);
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --radius-4xl: 1.75rem;
 }
 
 body {

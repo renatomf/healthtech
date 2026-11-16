@@ -1,6 +1,7 @@
 import { formatClinicDateTime, type PatientAppointmentResponse } from '@healthtech/shared';
-import { CalendarClock, ChevronRight, FileCheck2, FileClock } from 'lucide-react';
+import { ArrowRight, CalendarClock, FileCheck2, FileClock } from 'lucide-react';
 import { Link } from 'react-router';
+import { Heading } from '../../components/brand.tsx';
 import { Badge } from '../../components/ui/badge.tsx';
 import { Card } from '../../components/ui/card.tsx';
 import { Empty, ErrorMessage, Loading } from '../../components/ui/states.tsx';
@@ -28,35 +29,31 @@ export function PatientHome() {
     .at(-1); // a lista vem do mais recente para o mais antigo
 
   return (
-    <div className="space-y-8">
-      <div className="pt-4">
-        <h1 className="text-4xl font-light tracking-tight">Olá, {firstName}!</h1>
-        <p className="mt-1 text-muted">Acompanhe seus exames e laudos.</p>
-      </div>
+    <div className="space-y-10">
+      <Heading tail="seus exames e laudos.">Olá, {firstName}!</Heading>
 
       {appointments.isPending && <Loading />}
       {appointments.isError && <ErrorMessage>{errorMessage(appointments.error)}</ErrorMessage>}
 
       {next && (
-        <section
-          aria-labelledby="next-title"
-          className="rounded-3xl bg-primary p-6 text-primary-foreground"
-        >
-          <p id="next-title" className="text-sm opacity-90">
+        <Card tone="hero" aria-labelledby="next-title" className="min-h-56 space-y-10">
+          <p id="next-title" className="text-sm">
             Próximo exame
           </p>
-          <p className="mt-2 text-2xl font-light tracking-tight">{next.examType.name}</p>
-          <p className="mt-4 flex items-center gap-2 first-letter:uppercase">
-            <CalendarClock className="size-4" aria-hidden />
-            {formatClinicDateTime(next.scheduledAt, "EEEE, d 'de' MMMM 'às' HH:mm")}
-          </p>
-          <p className="mt-1 text-xs">Horário de Brasília</p>
-        </section>
+          <div>
+            <p className="text-4xl leading-tight font-light tracking-tight">{next.examType.name}</p>
+            <p className="mt-3 flex items-center gap-2 first-letter:uppercase">
+              <CalendarClock className="size-4" strokeWidth={1.5} aria-hidden />
+              {formatClinicDateTime(next.scheduledAt, "EEEE, d 'de' MMMM 'às' HH:mm")}
+            </p>
+            <p className="mt-1 text-xs">Horário de Brasília</p>
+          </div>
+        </Card>
       )}
 
       {appointments.isSuccess && (
-        <section aria-labelledby="exams-title" className="space-y-3">
-          <h2 id="exams-title" className="text-lg font-medium">
+        <section aria-labelledby="exams-title" className="space-y-4">
+          <h2 id="exams-title" className="text-2xl font-light tracking-tight">
             Meus exames
           </h2>
           {list.length === 0 && (
@@ -64,45 +61,47 @@ export function PatientHome() {
               <Empty>Você ainda não tem exames agendados.</Empty>
             </Card>
           )}
-          <ul className="space-y-3">
+          <ul className="space-y-2">
             {list.map((a) => {
               const content = (
                 <>
                   <span
                     className={cn(
-                      'grid size-11 shrink-0 place-items-center rounded-2xl',
+                      'grid size-11 shrink-0 place-items-center rounded-full ring-1',
                       a.hasPublishedReport
-                        ? 'bg-success-soft text-success'
-                        : 'bg-primary-soft text-link',
+                        ? 'bg-success-soft text-success ring-success-soft'
+                        : 'bg-surface-muted text-link ring-border',
                     )}
                   >
                     {a.hasPublishedReport ? (
-                      <FileCheck2 className="size-5" aria-hidden />
+                      <FileCheck2 className="size-5" strokeWidth={1.5} aria-hidden />
                     ) : (
-                      <FileClock className="size-5" aria-hidden />
+                      <FileClock className="size-5" strokeWidth={1.5} aria-hidden />
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-medium">{a.examType.name}</span>
-                    <span className="block text-sm text-muted">
+                    <span className="block">{a.examType.name}</span>
+                    <span className="block text-[13px] text-muted">
                       {formatClinicDateTime(a.scheduledAt)}
                     </span>
-                    <span className="mt-2 block">
+                    <span className="mt-3 block">
                       <Situation appointment={a} />
                     </span>
                   </span>
                 </>
               );
-              const box = 'flex items-center gap-4 rounded-3xl border border-border bg-surface p-4';
+              const box = 'flex items-center gap-4 rounded-4xl bg-surface p-5';
               return (
                 <li key={a.id}>
                   {a.hasPublishedReport ? (
                     <Link
                       to={`/paciente/exames/${a.id}/laudo`}
-                      className={cn(box, 'transition hover:bg-surface-muted')}
+                      className={cn(box, 'group transition hover:bg-primary-soft')}
                     >
                       {content}
-                      <ChevronRight className="size-4 text-muted" aria-hidden />
+                      <span className="grid size-9 place-items-center rounded-full bg-surface-muted text-muted transition group-hover:text-foreground">
+                        <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+                      </span>
                     </Link>
                   ) : (
                     <div className={box}>{content}</div>
@@ -111,7 +110,7 @@ export function PatientHome() {
               );
             })}
           </ul>
-          <p className="px-2 text-xs text-muted">Datas e horários no horário de Brasília.</p>
+          <p className="px-4 text-xs text-muted">Datas e horários no horário de Brasília.</p>
         </section>
       )}
     </div>

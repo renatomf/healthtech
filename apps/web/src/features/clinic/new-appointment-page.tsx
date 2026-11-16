@@ -1,7 +1,8 @@
 import { clinicDate, formatClinicDateTime } from '@healthtech/shared';
-import { ArrowLeft, Search } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, Check, Search } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { Heading } from '../../components/brand.tsx';
 import { Button } from '../../components/ui/button.tsx';
 import { Card } from '../../components/ui/card.tsx';
 import { Field, Input, Select } from '../../components/ui/field.tsx';
@@ -9,6 +10,18 @@ import { Empty, ErrorMessage, Loading } from '../../components/ui/states.tsx';
 import { cn } from '../../lib/cn.ts';
 import { errorMessage } from '../../lib/messages.ts';
 import { useCreateAppointment, useExamTypes, usePatients, useSlots } from './queries.ts';
+
+function Step({ n, title, children }: { n: string; title: string; children: ReactNode }) {
+  return (
+    <Card className="space-y-6">
+      <div>
+        <p className="text-sm text-muted tabular-nums">{n}</p>
+        <h2 className="mt-1 text-2xl font-light tracking-tight">{title}</h2>
+      </div>
+      {children}
+    </Card>
+  );
+}
 
 export function NewAppointmentPage() {
   const navigate = useNavigate();
@@ -26,6 +39,7 @@ export function NewAppointmentPage() {
 
   const patient = patients.data?.find((p) => p.id === patientId);
   const ready = patientId && examTypeId && slot;
+  const noSlots = slots.isSuccess && slots.data.every((s) => !s.available);
 
   const submit = () =>
     create.mutate(
@@ -38,24 +52,27 @@ export function NewAppointmentPage() {
     );
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-3xl space-y-8">
       <Link
         to="/clinica"
         className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground"
       >
-        <ArrowLeft className="size-4" aria-hidden /> Agenda
+        <ArrowLeft className="size-4" strokeWidth={1.5} aria-hidden /> Agenda
       </Link>
-      <h1 className="text-4xl font-light tracking-tight">Novo agendamento</h1>
+      <Heading tail="paciente, exame e horário.">Novo agendamento</Heading>
 
-      <Card className="space-y-4">
-        <h2 className="font-medium">1. Paciente</h2>
+      <Step n="01" title="Paciente">
         <Field label="Buscar por nome ou e-mail">
           {(p) => (
             <div className="relative">
-              <Search className="absolute top-3.5 left-4 size-4 text-muted" aria-hidden />
+              <Search
+                className="absolute top-4 left-4 size-4 text-muted"
+                strokeWidth={1.5}
+                aria-hidden
+              />
               <Input
                 {...p}
-                className="pl-10"
+                className="pl-11"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -68,32 +85,39 @@ export function NewAppointmentPage() {
         )}
         <fieldset className="grid gap-2 sm:grid-cols-2">
           <legend className="sr-only">Paciente</legend>
-          {patients.data?.map((p) => (
-            <label
-              key={p.id}
-              className={cn(
-                'flex cursor-pointer flex-col rounded-2xl border p-4 transition',
-                p.id === patientId
-                  ? 'border-primary bg-primary-soft'
-                  : 'border-border hover:bg-surface-muted',
-              )}
-            >
-              <input
-                type="radio"
-                name="patient"
-                className="sr-only"
-                checked={p.id === patientId}
-                onChange={() => setPatientId(p.id)}
-              />
-              <span className="font-medium">{p.name}</span>
-              <span className="text-sm text-muted">{p.email}</span>
-            </label>
-          ))}
+          {patients.data?.map((p) => {
+            const checked = p.id === patientId;
+            return (
+              <label
+                key={p.id}
+                className={cn(
+                  'flex cursor-pointer items-center justify-between gap-3 rounded-3xl p-5 transition',
+                  checked ? 'bg-primary-soft' : 'bg-surface-muted hover:bg-primary-soft',
+                )}
+              >
+                <input
+                  type="radio"
+                  name="patient"
+                  className="sr-only"
+                  checked={checked}
+                  onChange={() => setPatientId(p.id)}
+                />
+                <span>
+                  <span className="block">{p.name}</span>
+                  <span className="block text-[13px] text-muted">{p.email}</span>
+                </span>
+                {checked && (
+                  <span className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground">
+                    <Check className="size-4" aria-hidden />
+                  </span>
+                )}
+              </label>
+            );
+          })}
         </fieldset>
-      </Card>
+      </Step>
 
-      <Card className="space-y-4">
-        <h2 className="font-medium">2. Exame e horário</h2>
+      <Step n="02" title="Exame e horário">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Tipo de exame">
             {(p) => (
@@ -127,14 +151,9 @@ export function NewAppointmentPage() {
         {slots.isError && <ErrorMessage>{errorMessage(slots.error)}</ErrorMessage>}
         {slots.isSuccess && (
           <fieldset>
-            <legend className="mb-3 text-sm font-medium">Horários (30 min)</legend>
-            {slots.data.every((s) => !s.available) && (
-              <Empty>Nenhum horário livre neste dia.</Empty>
-            )}
-            <div
-              hidden={slots.data.every((s) => !s.available)}
-              className="grid grid-cols-4 gap-2 sm:grid-cols-6"
-            >
+            <legend className="mb-3 text-[13px] text-muted">Horários (30 min)</legend>
+            {noSlots && <Empty>Nenhum horário livre neste dia.</Empty>}
+            <div hidden={noSlots} className="grid grid-cols-4 gap-2 sm:grid-cols-6">
               {slots.data.map((s) => (
                 <button
                   key={s.startsAt}
@@ -143,7 +162,7 @@ export function NewAppointmentPage() {
                   aria-pressed={slot === s.startsAt}
                   onClick={() => setSlot(s.startsAt)}
                   className={cn(
-                    'h-10 rounded-full text-sm tabular-nums transition',
+                    'h-11 rounded-full text-sm tabular-nums transition',
                     slot === s.startsAt
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-surface-muted hover:bg-primary-soft',
@@ -156,13 +175,21 @@ export function NewAppointmentPage() {
             </div>
           </fieldset>
         )}
-      </Card>
+      </Step>
 
-      <Card className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-muted">
-          {ready && patient
-            ? `${patient.name} · ${formatClinicDateTime(slot, "dd/MM 'às' HH:mm")}`
-            : 'Escolha paciente, exame e horário.'}
+      <Card tone="muted" className="flex flex-wrap items-center justify-between gap-4">
+        <p className="text-sm">
+          {ready && patient ? (
+            <>
+              {patient.name}
+              <span className="text-muted">
+                {' · '}
+                {formatClinicDateTime(slot, "dd/MM 'às' HH:mm")}
+              </span>
+            </>
+          ) : (
+            <span className="text-muted">Escolha paciente, exame e horário.</span>
+          )}
         </p>
         <Button onClick={submit} disabled={!ready || create.isPending}>
           {create.isPending ? 'Agendando…' : 'Confirmar agendamento'}

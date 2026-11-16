@@ -37,14 +37,14 @@ export function ConfirmDialog({
       ref={ref}
       onClose={onClose}
       aria-labelledby={titleId}
-      className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-3xl border border-border bg-surface p-6 text-foreground backdrop:bg-black/40 backdrop:backdrop-blur-sm"
+      className="m-auto w-[min(30rem,calc(100%-2rem))] rounded-4xl bg-surface p-8 text-foreground backdrop:bg-black/40 backdrop:backdrop-blur-sm"
     >
-      <h2 id={titleId} className="text-lg font-semibold">
+      <h2 id={titleId} className="text-2xl font-light tracking-tight">
         {title}
       </h2>
-      <p className="mt-2 text-sm text-muted">{description}</p>
-      <div className="mt-6 flex justify-end gap-2">
-        <Button variant="outline" onClick={onClose}>
+      <p className="mt-3 text-sm text-muted">{description}</p>
+      <div className="mt-8 flex justify-end gap-2">
+        <Button variant="soft" onClick={onClose}>
           Voltar
         </Button>
         <Button variant={tone} onClick={onConfirm} disabled={pending}>

@@ -13,7 +13,7 @@ export function Badge({ tone, children }: { tone: keyof typeof tones; children: 
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap',
+        'inline-flex items-center rounded-full px-3 py-1 text-xs whitespace-nowrap',
         tones[tone],
       )}
     >

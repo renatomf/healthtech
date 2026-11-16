@@ -8,8 +8,9 @@ import {
 import { cn } from '../../lib/cn.ts';
 
 const control =
-  'w-full rounded-2xl border border-border bg-surface px-4 text-sm text-foreground placeholder:text-muted ' +
-  'disabled:bg-surface-muted disabled:text-muted aria-invalid:border-danger';
+  'w-full rounded-2xl bg-surface-muted px-4 text-sm text-foreground placeholder:text-muted ' +
+  'ring-1 ring-transparent transition focus:bg-surface focus:ring-ring ' +
+  'disabled:text-muted aria-invalid:ring-danger';
 
 interface FieldProps {
   label: string;
@@ -26,8 +27,8 @@ export function Field({ label, error, hint, children }: FieldProps) {
   const id = useId();
   const describedBy = error || hint ? `${id}-desc` : undefined;
   return (
-    <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium">
+    <div className="space-y-2">
+      <label htmlFor={id} className="block text-[13px] text-muted">
         {label}
       </label>
       {children({ id, 'aria-invalid': error ? true : undefined, 'aria-describedby': describedBy })}
@@ -41,15 +42,15 @@ export function Field({ label, error, hint, children }: FieldProps) {
 }
 
 export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cn(control, 'h-11', className)} {...props} />;
+  return <input className={cn(control, 'h-12', className)} {...props} />;
 }
 
 export function Select({ className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={cn(control, 'h-11', className)} {...props} />;
+  return <select className={cn(control, 'h-12', className)} {...props} />;
 }
 
 export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
-    <textarea className={cn(control, 'min-h-48 py-3 leading-relaxed', className)} {...props} />
+    <textarea className={cn(control, 'min-h-56 py-4 leading-relaxed', className)} {...props} />
   );
 }

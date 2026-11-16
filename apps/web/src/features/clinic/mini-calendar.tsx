@@ -42,8 +42,8 @@ export function MiniCalendar({ value, today, onChange }: Props) {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <p className="font-medium capitalize">
+      <div className="mb-5 flex items-center justify-between">
+        <p className="text-lg font-light tracking-tight capitalize">
           {MONTHS[view.month]} {view.year}
         </p>
         <div className="flex gap-1">
@@ -51,7 +51,7 @@ export function MiniCalendar({ value, today, onChange }: Props) {
             type="button"
             onClick={() => move(-1)}
             aria-label="Mês anterior"
-            className="grid size-8 place-items-center rounded-full bg-surface-muted text-muted hover:text-foreground"
+            className="grid size-9 place-items-center rounded-full bg-surface-muted text-muted transition hover:text-foreground"
           >
             <ChevronLeft className="size-4" aria-hidden />
           </button>
@@ -59,7 +59,7 @@ export function MiniCalendar({ value, today, onChange }: Props) {
             type="button"
             onClick={() => move(1)}
             aria-label="Próximo mês"
-            className="grid size-8 place-items-center rounded-full bg-surface-muted text-muted hover:text-foreground"
+            className="grid size-9 place-items-center rounded-full bg-surface-muted text-muted transition hover:text-foreground"
           >
             <ChevronRight className="size-4" aria-hidden />
           </button>
@@ -84,10 +84,8 @@ export function MiniCalendar({ value, today, onChange }: Props) {
               style={day === 1 ? { gridColumnStart: first.getUTCDay() + 1 } : undefined}
               className={cn(
                 'mx-auto grid size-9 place-items-center rounded-full transition',
-                selected
-                  ? 'bg-primary font-medium text-primary-foreground'
-                  : 'hover:bg-surface-muted',
-                !selected && date === today && 'font-semibold text-link',
+                selected ? 'bg-primary text-primary-foreground' : 'hover:bg-surface-muted',
+                !selected && date === today && 'text-link ring-1 ring-ring',
               )}
             >
               {day}

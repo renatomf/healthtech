@@ -41,28 +41,28 @@ export function AppointmentPage() {
   const published = a.reportStatus === 'PUBLISHED';
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-3xl space-y-8">
       <Link
         to={`/clinica?data=${formatClinicDateTime(a.scheduledAt, 'yyyy-MM-dd')}`}
         className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground"
       >
-        <ArrowLeft className="size-4" aria-hidden /> Agenda
+        <ArrowLeft className="size-4" strokeWidth={1.5} aria-hidden /> Agenda
       </Link>
 
-      <Card className="bg-linear-to-b from-hero-from to-hero-to">
+      <Card className="space-y-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-1">
-            <p className="text-sm text-muted">{a.examType.name}</p>
-            <h1 className="text-3xl font-light tracking-tight">{a.patient.name}</h1>
-            <p className="first-letter:uppercase">
-              {formatClinicDateTime(a.scheduledAt, "EEEE, d 'de' MMMM 'às' HH:mm")}
-              <span className="text-sm text-muted"> · horário de Brasília</span>
-            </p>
-          </div>
+          <p className="text-sm text-muted">{a.examType.name}</p>
           <AppointmentBadges appointment={a} />
         </div>
-        {!canceled && (
-          <div className="mt-6 space-y-3">
+        <h1 className="text-4xl leading-[1.15] font-light tracking-tight">
+          {a.patient.name}
+          <span className="block text-muted first-letter:uppercase">
+            {formatClinicDateTime(a.scheduledAt, "EEEE, d 'de' MMMM 'às' HH:mm")}
+          </span>
+        </h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-muted">Horário de Brasília</p>
+          {!canceled && (
             <Button
               variant="danger"
               size="sm"
@@ -71,18 +71,18 @@ export function AppointmentPage() {
             >
               Cancelar agendamento
             </Button>
-            {published && (
-              <p className="text-xs text-muted">
-                Agendamentos com laudo publicado não podem ser cancelados.
-              </p>
-            )}
-            {cancel.isError && <ErrorMessage>{errorMessage(cancel.error)}</ErrorMessage>}
-          </div>
+          )}
+        </div>
+        {!canceled && published && (
+          <p className="text-xs text-muted">
+            Agendamentos com laudo publicado não podem ser cancelados.
+          </p>
         )}
+        {cancel.isError && <ErrorMessage>{errorMessage(cancel.error)}</ErrorMessage>}
       </Card>
 
       {canceled ? (
-        <Card>
+        <Card tone="muted">
           <p className="text-sm text-muted">Agendamento cancelado: não pode receber laudo.</p>
         </Card>
       ) : (
@@ -127,9 +127,9 @@ function ReportEditor({
   const error = save.error ?? publish.error;
 
   return (
-    <Card className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-medium">Laudo</h2>
+    <Card className="space-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <h2 className="text-2xl font-light tracking-tight">Laudo</h2>
         {report?.status === 'DRAFT' && (
           <Badge tone="warning">Rascunho · visível só para a clínica</Badge>
         )}
@@ -141,10 +141,10 @@ function ReportEditor({
       <form
         noValidate
         onSubmit={form.handleSubmit((values) => save.mutate(values))}
-        className="space-y-4"
+        className="space-y-6"
       >
-        <fieldset disabled={published} className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+        <fieldset disabled={published} className="space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Título" error={errors.title && 'Informe o título.'}>
               {(p) => <Input {...p} {...form.register('title')} />}
             </Field>
