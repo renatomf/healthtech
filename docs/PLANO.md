@@ -19,7 +19,7 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 - [x] Laudos: salvar rascunho, publicar (`FOR UPDATE` + UPDATE condicional)
 - [x] Rotas do paciente com escopo na query e DTO próprio; cenários 2, 3 e 4 passando
 - [x] Extras: corrida cancelar × publicar, varredura de autorização, filtro 22:30, constraints via SQL
-- [ ] Front clínica: login, lista com filtros, novo agendamento (combobox + slots), detalhe com editor de laudo, cancelar
+- [x] Front clínica: login, lista com filtros, novo agendamento (combobox + slots), detalhe com editor de laudo, cancelar
 
 ## Dia 3 — paciente, acabamento e documentação
 

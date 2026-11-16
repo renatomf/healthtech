@@ -1,0 +1,82 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f3f6fc;
+  --surface: #ffffff;
+  --surface-muted: #eef3fe;
+  --border: #e1e8f5;
+  --foreground: #0b1a4a;
+  --muted: #56627a;
+  --primary: #3d5fc4;
+  --primary-hover: #324fa8;
+  --primary-soft: #dde7fb;
+  --primary-foreground: #ffffff;
+  --link: #3550b0;
+  --hero-from: #eaf1ff;
+  --hero-to: #c8d7f5;
+  --success: #15803d;
+  --success-soft: #e3f5ea;
+  --warning: #9a4d04;
+  --warning-soft: #fdf1df;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  --ring: #8ea9ec;
+}
+
+.dark {
+  --background: #070d24;
+  --surface: #0e1735;
+  --surface-muted: #14204a;
+  --border: rgb(255 255 255 / 0.08);
+  --foreground: #e6ebfa;
+  --muted: #a3afd0;
+  --primary: #3d5fc4;
+  --primary-hover: #4b6ed6;
+  --primary-soft: rgb(110 145 235 / 0.18);
+  --primary-foreground: #ffffff;
+  --link: #a9c0ff;
+  --hero-from: #1a2a5e;
+  --hero-to: #0e1735;
+  --success: #5ad48a;
+  --success-soft: rgb(90 212 138 / 0.12);
+  --warning: #f5c04e;
+  --warning-soft: rgb(245 192 78 / 0.12);
+  --danger: #f58a8a;
+  --danger-soft: rgb(245 138 138 / 0.12);
+  --ring: #6e91eb;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-link: var(--link);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-ring: var(--ring);
+  --color-hero-from: var(--hero-from);
+  --color-hero-to: var(--hero-to);
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  @apply bg-background font-sans text-foreground antialiased;
+}
+
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-ring;
+}

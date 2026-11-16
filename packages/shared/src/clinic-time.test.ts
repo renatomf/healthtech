@@ -3,6 +3,7 @@ import {
   clinicDate,
   clinicDayRange,
   clinicTime,
+  formatClinicDateTime,
   listClinicSlots,
   parseClinicSlot,
 } from './clinic-time.ts';
@@ -39,5 +40,14 @@ describe('listClinicSlots', () => {
     expect(slots).toHaveLength(20);
     expect(slots[0]?.toISOString()).toBe('2026-11-20T11:00:00.000Z');
     expect(slots.at(-1)?.toISOString()).toBe('2026-11-20T20:30:00.000Z');
+  });
+});
+
+describe('formatClinicDateTime', () => {
+  it('formata no fuso da clínica e em português, independentemente do fuso do navegador', () => {
+    const instant = new Date('2026-11-21T01:30:00Z'); // 22:30 do dia 20 em Brasília
+
+    expect(formatClinicDateTime(instant)).toBe('20/11/2026 às 22:30');
+    expect(formatClinicDateTime(instant, "EEEE, d 'de' MMMM")).toBe('sexta-feira, 20 de novembro');
   });
 });

@@ -1,5 +1,6 @@
 import { TZDate } from '@date-fns/tz';
 import { addMinutes, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export const CLINIC_TIMEZONE = 'America/Sao_Paulo';
 export const SLOT_MINUTES = 30;
@@ -45,4 +46,13 @@ export function listClinicSlots(
     slot = addMinutes(slot, SLOT_MINUTES);
   }
   return slots;
+}
+
+/** Exibição de data/hora sempre no fuso da clínica, em português. */
+export function formatClinicDateTime(
+  instant: Date | string,
+  pattern = "dd/MM/yyyy 'às' HH:mm",
+  timeZone = CLINIC_TIMEZONE,
+): string {
+  return format(new TZDate(new Date(instant), timeZone), pattern, { locale: ptBR });
 }

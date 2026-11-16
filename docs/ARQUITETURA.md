@@ -213,11 +213,16 @@ O front decide a mensagem pelo `code`, nunca pelo texto.
 - Reserva **não otimista**: em 409, invalida a query de slots e mostra "esse horário acabou de ser ocupado".
 - Estados de carregando, vazio e erro em todas as telas; 401 global redireciona para login.
 
-### Identidade visual (pedido do autor, referências de mockup "care 1" e "care 2")
+### Identidade visual
 
-- **Elegante e sóbrio.** Nada de degradês exagerados, brilho ou "hero" chamativo. Cores sólidas; profundidade só por borda sutil e sombra leve.
-- **Paleta:** primária teal/petróleo (ex.: `#0e7c86`), superfícies claras quase brancas com leve tom frio, texto grafite. Verde só para estado positivo ("Laudo disponível"), âmbar para rascunho, vermelho contido para cancelado.
-- **Componentes:** cards com cantos arredondados (~16 px) e muito respiro; card de destaque em teal sólido para o "Próximo exame" do paciente; ícones de linha (lucide); tipografia sans limpa (Inter), títulos semibold.
-- **Light / dark mode:** obrigatório, com alternância manual no cabeçalho e padrão vindo de `prefers-color-scheme`; preferência salva só em `localStorage` (é conveniência visual, não dado sensível). Dark: fundo azul-marinho profundo (`#0b1220`), cards um pouco mais claros com borda translúcida, acentos teal. Toques sutis de vidro (`backdrop-blur` leve) são aceitos só no dark e só em superfícies flutuantes (cabeçalho, diálogos).
-- **Tokens** de cor como variáveis CSS (padrão shadcn/ui) com valores para `:root` e `.dark`; componentes nunca usam cor literal.
-- Contraste AA nos dois temas (verificado pelo axe nos testes E2E).
+Referências do autor: imagens do site DocShield (paleta, tipografia, botões) e o mockup "iMed Portal" (layout do painel da clínica).
+
+- **Sóbrio e confiável.** Cores sólidas; o único degradê permitido é um vertical muito suave (azul-claro → azul-pó) no card de destaque e no painel do login, como no DocShield. Nada de brilho ou degradê chamativo.
+- **Paleta azul suave:** marinho `#0B1A4A` (títulos e texto), cinza-azulado `#56627A` (secundário), azul médio `#3D5FC4` (ação principal, item ativo, dia selecionado), azul-pó `#DDE7FB` (botões secundários em pílula, chips), superfícies `#FFFFFF` / `#EEF3FE`, fundo `#F3F6FC`. Verde só para "Laudo publicado", âmbar para rascunho, vermelho contido para cancelado.
+- **Tipografia:** Inter; títulos grandes em peso leve/normal com `tracking-tight` (como o DocShield), números de resumo grandes e leves.
+- **Componentes:** botões e chips em pílula (`rounded-full`), cards `rounded-3xl` com borda sutil e sombra leve, ícones de linha (lucide), muito respiro.
+- **Layout da clínica (painel, estilo iMed):** sidebar à esquerda (Agenda, Novo agendamento), área central com cards-resumo do dia e lista de agendamentos, coluna direita com calendário. Mobile: sidebar vira barra superior, colunas empilham.
+- **Paciente:** mobile-first, card do próximo exame em destaque e lista de exames com selo "Laudo disponível".
+- **Light / dark:** alternância manual no cabeçalho, padrão por `prefers-color-scheme`, preferência em `localStorage` (conveniência visual). Dark: fundo marinho `#070D24`, cards `#0E1735` com borda translúcida, mesmo azul de ação.
+- **Tokens** de cor como variáveis CSS (`:root` e `.dark`); componentes não usam cor literal.
+- Contraste AA nos dois temas (verificado pelo axe no E2E).
