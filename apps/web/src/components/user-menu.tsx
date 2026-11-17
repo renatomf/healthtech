@@ -51,7 +51,9 @@ export function UserMenu({ links = [] }: { links?: MenuLink[] }) {
     <>
       {/* Desktop: tema → quem está logado → sair (no canto direito). */}
       <div className="hidden items-center gap-2 lg:flex">
-        <ThemeToggle small />
+        <span className="mr-2">
+          <ThemeToggle small />
+        </span>
         <div className="flex items-center gap-2 rounded-full bg-surface-muted py-0.5 pr-4 pl-0.5">
           <Avatar name={me.data?.name} small />
           <span className="leading-tight">
