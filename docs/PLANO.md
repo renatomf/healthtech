@@ -32,7 +32,7 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 
 ## Antes de enviar
 
-- [ ] Clonar em diretório limpo e seguir só o README até os testes passarem — instalação validada em 16/11 (clone limpo → `docker compose up` → login das duas contas em 68 s); falta rodar os testes a partir do clone
+- [x] Clonar em diretório limpo e seguir só o README até os testes passarem — 16/11: clone sem `.env` → `docker compose up -d` (build do zero, seed automático, login das duas contas) → `pnpm install` → `pnpm verify` (66) → `pnpm test:e2e` (13)
 - [ ] `git log` sem `.env`, segredos ou arquivos gerados
 - [ ] Nenhum `TODO`, `console.log`, `.skip` ou código comentado
 - [ ] Roteiro de avaliação executado manualmente

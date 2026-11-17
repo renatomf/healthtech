@@ -124,14 +124,16 @@ O passo a passo para leigos está em [Como rodar em 1 minuto](#como-rodar-em-1-m
 
 ### Se algo der errado
 
-| Sintoma                                                             | O que fazer                                                                                                       |
-| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `Cannot connect to the Docker daemon` / `docker: command not found` | Abra o Docker Desktop e espere ele ficar "running"                                                                |
-| `port is already allocated`                                         | Outra coisa usa a porta 5173, 3333 ou 55432. Feche-a, ou troque `POSTGRES_HOST_PORT` no `.env` (banco)            |
-| `docker compose` não é reconhecido                                  | Docker Desktop desatualizado: atualize (o Compose v2 vem junto)                                                   |
-| API não sobe e o log diz "Variáveis de ambiente inválidas"          | Você criou um `.env` com algum valor errado: apague-o (o projeto roda sem ele) ou copie de novo do `.env.example` |
-| "E-mail ou senha incorretos" com as contas acima                    | Os dados foram apagados: rode `docker compose exec api node src/db/seed.ts`                                       |
-| "Muitas tentativas" no login                                        | Limite de 5 tentativas por minuto: espere um minuto                                                               |
+| Sintoma                                                                   | O que fazer                                                                                                       |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `Cannot connect to the Docker daemon` / `docker: command not found`       | Abra o Docker Desktop e espere ele ficar "running"                                                                |
+| `port is already allocated`                                               | Outra coisa usa a porta 5173, 3333 ou 55432. Feche-a, ou troque `POSTGRES_HOST_PORT` no `.env` (banco)            |
+| `docker compose` não é reconhecido                                        | Docker Desktop desatualizado: atualize (o Compose v2 vem junto)                                                   |
+| `corepack enable` dá "EPERM: operation not permitted" (Windows)           | Rode `npm install -g pnpm` (não precisa de administrador) ou abra o terminal como administrador                   |
+| "O sistema não pode encontrar o caminho especificado" no `pnpm` (Windows) | Caminho da pasta longo demais: clone numa pasta curta, como `C:\projetos\healthtech`                              |
+| API não sobe e o log diz "Variáveis de ambiente inválidas"                | Você criou um `.env` com algum valor errado: apague-o (o projeto roda sem ele) ou copie de novo do `.env.example` |
+| "E-mail ou senha incorretos" com as contas acima                          | Os dados foram apagados: rode `docker compose exec api node src/db/seed.ts`                                       |
+| "Muitas tentativas" no login                                              | Limite de 5 tentativas por minuto: espere um minuto                                                               |
 
 ### Desenvolvimento local (opcional)
 
@@ -139,7 +141,7 @@ Para mexer no código com recarga automática. **Você precisa de:** Docker (só
 
 ```bash
 cp .env.example .env
-corepack enable
+corepack enable             # ou, se der "EPERM" no Windows: npm install -g pnpm
 pnpm install
 docker compose up -d db     # só o banco
 pnpm db:migrate             # cria as tabelas
@@ -187,7 +189,7 @@ docker compose exec api node src/db/seed.ts   # com Docker
 Rodar a aplicação só precisa do Docker. **Rodar os testes precisa também de Node 24 e pnpm:**
 
 ```bash
-corepack enable          # habilita o pnpm na versão certa (vem com o Node)
+corepack enable          # habilita o pnpm (vem com o Node). Erro "EPERM" no Windows? use: npm install -g pnpm
 pnpm install
 cp .env.example .env     # Windows (cmd): copy .env.example .env
 ```
