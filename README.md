@@ -137,7 +137,7 @@ Exemplo completo, sem segredos reais, em [`.env.example`](.env.example). A API v
 
 ## Roteiro de avaliação
 
-Com o stack no ar e o seed carregado (~10 min):
+Roteiro completo, passo a passo e com o resultado esperado de cada ação: **[`docs/ROTEIRO_TESTE.md`](docs/ROTEIRO_TESTE.md)** (~20 min). Versão curta, com o stack no ar e o seed carregado (~10 min):
 
 1. **Clínica** — entre como `clinica@demo.local`. No calendário, escolha **ontem**: A (João, publicado), B (João, rascunho) e C (Maria, publicado).
 2. **Rascunho → publicado** — abra B, edite o texto, _Salvar rascunho_ e _Publicar laudo_ (com confirmação). Os campos travam e aparece a data de publicação.
