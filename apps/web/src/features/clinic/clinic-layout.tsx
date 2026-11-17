@@ -18,7 +18,7 @@ export function ClinicLayout() {
     <div className="min-h-dvh lg:grid lg:h-dvh lg:grid-cols-[16rem_1fr]">
       <aside className="hidden flex-col border-r border-border bg-surface p-6 lg:flex">
         <Brand />
-        <nav aria-label="Principal" className="mt-12 flex flex-col gap-1">
+        <nav aria-label="Principal" className="mt-12 flex flex-col gap-3">
           {NAV.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
