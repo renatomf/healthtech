@@ -88,15 +88,12 @@ export function AgendaPage() {
                     <Select
                       {...p}
                       value={patientId}
-                      onChange={(e) => setFilter('paciente', e.target.value)}
-                    >
-                      <option value="">Todos os pacientes</option>
-                      {patients.data?.map((pt) => (
-                        <option key={pt.id} value={pt.id}>
-                          {pt.name}
-                        </option>
-                      ))}
-                    </Select>
+                      onChange={(v) => setFilter('paciente', v)}
+                      options={[
+                        { value: '', label: 'Todos os pacientes' },
+                        ...(patients.data ?? []).map((pt) => ({ value: pt.id, label: pt.name })),
+                      ]}
+                    />
                   )}
                 </Field>
               </div>

@@ -121,14 +121,12 @@ export function NewAppointmentPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Tipo de exame">
             {(p) => (
-              <Select {...p} value={examTypeId} onChange={(e) => setExamTypeId(e.target.value)}>
-                <option value="">Selecione</option>
-                {examTypes.data?.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </Select>
+              <Select
+                {...p}
+                value={examTypeId}
+                onChange={setExamTypeId}
+                options={(examTypes.data ?? []).map((t) => ({ value: t.id, label: t.name }))}
+              />
             )}
           </Field>
           <Field label="Dia" hint="Horário de Brasília">

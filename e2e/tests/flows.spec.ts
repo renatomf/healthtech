@@ -9,7 +9,8 @@ test('clínica agenda um exame e ele aparece na agenda do dia', async ({ page })
 
   await page.getByRole('navigation').getByRole('link', { name: 'Novo agendamento' }).click();
   await page.getByText('Maria Oliveira').click();
-  await page.getByLabel('Tipo de exame').selectOption({ label: 'Ultrassom' });
+  await page.getByRole('combobox', { name: 'Tipo de exame' }).click();
+  await page.getByRole('option', { name: 'Ultrassom' }).click();
   await page.getByLabel('Dia').fill(tomorrow);
   await page.getByRole('button', { name: '08:30' }).click();
   await page.getByRole('button', { name: 'Confirmar agendamento' }).click();
@@ -75,4 +76,21 @@ test.describe('tema', () => {
 
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
+});
+
+test('filtro de paciente funciona só com o teclado', async ({ page }) => {
+  await login(page, 'clinica@demo.local');
+  await page.goto(`/clinica?data=${yesterday}`);
+
+  const filter = page.getByRole('combobox', { name: 'Paciente' });
+  await filter.focus();
+  await page.keyboard.press('ArrowDown'); // abre a lista
+  await expect(page.getByRole('listbox')).toBeVisible();
+  await page.keyboard.press('ArrowDown'); // de "Todos" para o primeiro paciente
+  await page.keyboard.press('Enter');
+
+  await expect(page.getByRole('listbox')).toBeHidden();
+  await expect(page).toHaveURL(/paciente=/);
+  await expect(filter).toHaveText(/João da Silva/);
+  await expect(page.getByRole('link', { name: /Maria Oliveira/ })).toHaveCount(0);
 });
