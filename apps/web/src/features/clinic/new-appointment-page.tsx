@@ -9,6 +9,7 @@ import { Field, Input, Select } from '../../components/ui/field.tsx';
 import { Empty, ErrorMessage, Loading } from '../../components/ui/states.tsx';
 import { cn } from '../../lib/cn.ts';
 import { errorMessage } from '../../lib/messages.ts';
+import { DatePicker } from './date-picker.tsx';
 import { useCreateAppointment, useExamTypes, usePatients, useSlots } from './queries.ts';
 
 function Step({ n, title, children }: { n: string; title: string; children: ReactNode }) {
@@ -131,13 +132,13 @@ export function NewAppointmentPage() {
           </Field>
           <Field label="Dia" hint="Horário de Brasília">
             {(p) => (
-              <Input
+              <DatePicker
                 {...p}
-                type="date"
-                min={today}
                 value={date}
-                onChange={(e) => {
-                  setDate(e.target.value);
+                today={today}
+                min={today}
+                onChange={(d) => {
+                  setDate(d);
                   setSlot('');
                 }}
               />

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
-import { dayFromToday, login } from './helpers.ts';
+import { dayFromToday, login, pickDay } from './helpers.ts';
 
 async function expectAccessible(page: Page, screen: string) {
   const { violations } = await new AxeBuilder({ page }).analyze();
@@ -33,7 +33,7 @@ for (const theme of ['light', 'dark'] as const) {
       await expectAccessible(page, 'detalhe');
 
       await page.goto('/clinica/agendamentos/novo');
-      await page.getByLabel('Dia').fill(dayFromToday(1));
+      await pickDay(page, dayFromToday(1));
       await expect(page.getByRole('button', { name: '09:00' })).toBeVisible();
       await expectAccessible(page, 'novo agendamento');
     });

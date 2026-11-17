@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dayFromToday, login } from './helpers.ts';
+import { dayFromToday, login, pickDay } from './helpers.ts';
 
 const tomorrow = dayFromToday(1);
 const yesterday = dayFromToday(-1);
@@ -11,7 +11,7 @@ test('clínica agenda um exame e ele aparece na agenda do dia', async ({ page })
   await page.getByText('Maria Oliveira').click();
   await page.getByRole('combobox', { name: 'Tipo de exame' }).click();
   await page.getByRole('option', { name: 'Ultrassom' }).click();
-  await page.getByLabel('Dia').fill(tomorrow);
+  await pickDay(page, tomorrow);
   await page.getByRole('button', { name: '08:30' }).click();
   await page.getByRole('button', { name: 'Confirmar agendamento' }).click();
 
@@ -49,7 +49,7 @@ test('regras visíveis: horário ocupado desabilitado e cancelamento bloqueado c
   await login(page, 'clinica@demo.local');
 
   await page.getByRole('navigation').getByRole('link', { name: 'Novo agendamento' }).click();
-  await page.getByLabel('Dia').fill(tomorrow);
+  await pickDay(page, tomorrow);
   await expect(page.getByRole('button', { name: '10:00' })).toBeDisabled(); // agendamento E
   await expect(page.getByRole('button', { name: '09:00' })).toBeEnabled(); // D cancelado
 
@@ -93,4 +93,24 @@ test('filtro de paciente funciona só com o teclado', async ({ page }) => {
   await expect(page).toHaveURL(/paciente=/);
   await expect(filter).toHaveText(/João da Silva/);
   await expect(page.getByRole('link', { name: /Maria Oliveira/ })).toHaveCount(0);
+});
+
+test('date picker: dias passados desabilitados, Esc fecha e devolve o foco', async ({ page }) => {
+  await login(page, 'clinica@demo.local');
+  await page.goto('/clinica/agendamentos/novo');
+
+  const field = page.getByRole('button', { name: /^Dia/ });
+  await field.click();
+  const dialog = page.getByRole('dialog', { name: 'Escolher dia' });
+  await expect(dialog).toBeVisible();
+
+  const [, , d] = yesterday.split('-').map(Number);
+  // Ontem, se ainda estiver no mês exibido, não pode ser escolhido.
+  if (yesterday.slice(0, 7) === dayFromToday(0).slice(0, 7)) {
+    await expect(dialog.getByRole('button', { name: new RegExp(`^${d} de `) })).toBeDisabled();
+  }
+
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(field).toBeFocused();
 });

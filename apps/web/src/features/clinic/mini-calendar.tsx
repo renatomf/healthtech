@@ -24,17 +24,20 @@ const ymd = (y: number, m: number, d: number) =>
 interface Props {
   value: string; // YYYY-MM-DD no fuso da clínica
   today: string;
+  /** Dias antes desta data ficam desabilitados (ex.: não agendar no passado). */
+  min?: string;
   onChange: (date: string) => void;
 }
 
 // Datas de calendário puras (sem horário): a aritmética em UTC não depende do fuso do navegador.
-export function MiniCalendar({ value, today, onChange }: Props) {
+export function MiniCalendar({ value, today, min, onChange }: Props) {
   const [year, month] = value.split('-').map(Number) as [number, number];
   const [view, setView] = useState({ year, month: month - 1 });
 
   const first = new Date(Date.UTC(view.year, view.month, 1));
   const daysInMonth = new Date(Date.UTC(view.year, view.month + 1, 0)).getUTCDate();
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const atMinMonth = min !== undefined && ymd(view.year, view.month, 1) <= `${min.slice(0, 7)}-01`;
   const move = (delta: number) => {
     const d = new Date(Date.UTC(view.year, view.month + delta, 1));
     setView({ year: d.getUTCFullYear(), month: d.getUTCMonth() });
@@ -50,8 +53,9 @@ export function MiniCalendar({ value, today, onChange }: Props) {
           <button
             type="button"
             onClick={() => move(-1)}
+            disabled={atMinMonth}
             aria-label="Mês anterior"
-            className="grid size-9 place-items-center rounded-full bg-surface-muted text-muted transition hover:text-foreground"
+            className="grid size-9 place-items-center rounded-full bg-surface-muted text-muted transition hover:text-foreground disabled:opacity-40"
           >
             <ChevronLeft className="size-4" aria-hidden />
           </button>
@@ -74,10 +78,12 @@ export function MiniCalendar({ value, today, onChange }: Props) {
         {days.map((day) => {
           const date = ymd(view.year, view.month, day);
           const selected = date === value;
+          const disabled = min !== undefined && date < min;
           return (
             <button
               key={date}
               type="button"
+              disabled={disabled}
               onClick={() => onChange(date)}
               aria-pressed={selected}
               aria-label={`${day} de ${MONTHS[view.month]}`}
@@ -86,6 +92,7 @@ export function MiniCalendar({ value, today, onChange }: Props) {
                 'mx-auto grid size-9 place-items-center rounded-full transition',
                 selected ? 'bg-primary text-primary-foreground' : 'hover:bg-surface-muted',
                 !selected && date === today && 'text-link ring-1 ring-ring',
+                'disabled:cursor-not-allowed disabled:text-muted disabled:opacity-40 disabled:hover:bg-transparent',
               )}
             >
               {day}

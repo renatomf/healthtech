@@ -11,7 +11,8 @@ import {
 } from 'react';
 import { cn } from '../../lib/cn.ts';
 
-const control =
+/** Visual dos campos, também usado por controles próprios (select, date picker). */
+export const control =
   'w-full rounded-2xl bg-surface-muted px-4 text-sm text-foreground placeholder:text-muted ' +
   'ring-1 ring-transparent transition focus:bg-surface focus:ring-ring ' +
   'disabled:text-muted aria-invalid:ring-danger';
@@ -32,7 +33,7 @@ export function Field({ label, error, hint, children }: FieldProps) {
   const describedBy = error || hint ? `${id}-desc` : undefined;
   return (
     <div className="space-y-2">
-      <label htmlFor={id} className="block text-[13px] text-muted">
+      <label id={`${id}-label`} htmlFor={id} className="block text-[13px] text-muted">
         {label}
       </label>
       {children({ id, 'aria-invalid': error ? true : undefined, 'aria-describedby': describedBy })}
