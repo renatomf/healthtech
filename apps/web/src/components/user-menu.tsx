@@ -75,7 +75,7 @@ export function UserMenu({ links = [] }: { links?: MenuLink[] }) {
         type="button"
         popoverTarget="user-menu"
         aria-label="Abrir menu"
-        className="grid size-10 place-items-center rounded-full bg-foreground text-background lg:hidden"
+        className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground lg:hidden"
       >
         <Menu className="size-4" strokeWidth={1.5} aria-hidden />
       </button>
