@@ -12,7 +12,7 @@ services:
     image: postgres:17-alpine
     environment: *db-env
     ports:
-      - "${POSTGRES_HOST_PORT:-55432}:5432"
+      - "${POSTGRES_HOST_PORT:-15432}:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:

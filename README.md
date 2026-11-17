@@ -116,18 +116,18 @@ O passo a passo para leigos está em [Como rodar em 1 minuto](#como-rodar-em-1-m
 | Apagar tudo, inclusive o banco            | `docker compose down -v`                      |
 | Ver os logs da API                        | `docker compose logs -f api`                  |
 
-| Serviço         | Endereço                                                                     |
-| --------------- | ---------------------------------------------------------------------------- |
-| Aplicação (web) | http://localhost:5173                                                        |
-| API             | http://localhost:3333                                                        |
-| PostgreSQL      | `localhost:55432` (porta alta para não colidir com um Postgres já instalado) |
+| Serviço         | Endereço                                                                        |
+| --------------- | ------------------------------------------------------------------------------- |
+| Aplicação (web) | http://localhost:5173                                                           |
+| API             | http://localhost:3333                                                           |
+| PostgreSQL      | `localhost:15432` (fora da 5432, para não colidir com um Postgres já instalado) |
 
 ### Se algo der errado
 
 | Sintoma                                                                   | O que fazer                                                                                                       |
 | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `Cannot connect to the Docker daemon` / `docker: command not found`       | Abra o Docker Desktop e espere ele ficar "running"                                                                |
-| `port is already allocated`                                               | Outra coisa usa a porta 5173, 3333 ou 55432. Feche-a, ou troque `POSTGRES_HOST_PORT` no `.env` (banco)            |
+| `port is already allocated`                                               | Outra coisa usa a porta 5173, 3333 ou 15432. Feche-a, ou troque `POSTGRES_HOST_PORT` no `.env` (banco)            |
 | `docker compose` não é reconhecido                                        | Docker Desktop desatualizado: atualize (o Compose v2 vem junto)                                                   |
 | `corepack enable` dá "EPERM: operation not permitted" (Windows)           | Rode `npm install -g pnpm` (não precisa de administrador) ou abra o terminal como administrador                   |
 | "O sistema não pode encontrar o caminho especificado" no `pnpm` (Windows) | Caminho da pasta longo demais: clone numa pasta curta, como `C:\projetos\healthtech`                              |
@@ -212,8 +212,8 @@ Com Docker, **nenhuma é obrigatória**: o `docker-compose.yml` traz valores pad
 | Variável                                            | Padrão / exemplo                      | Uso                                                           |
 | --------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------- |
 | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | `clinic` / … / `clinic`               | Banco do Compose                                              |
-| `POSTGRES_HOST_PORT`                                | `55432`                               | Porta do banco no host                                        |
-| `DATABASE_URL`                                      | `postgres://…@localhost:55432/clinic` | Conexão da API (no Compose é sobrescrita para o serviço `db`) |
+| `POSTGRES_HOST_PORT`                                | `15432`                               | Porta do banco no host                                        |
+| `DATABASE_URL`                                      | `postgres://…@localhost:15432/clinic` | Conexão da API (no Compose é sobrescrita para o serviço `db`) |
 | `JWT_SECRET`                                        | ≥ 32 caracteres                       | Assinatura do token. **Troque em produção**                   |
 | `JWT_EXPIRES_IN`                                    | `8h`                                  | Validade da sessão                                            |
 | `WEB_ORIGIN`                                        | `http://localhost:5173`               | Única origem liberada no CORS                                 |
