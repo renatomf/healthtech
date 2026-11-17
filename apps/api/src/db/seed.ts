@@ -97,7 +97,14 @@ if (import.meta.main) {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error('DATABASE_URL não definida');
   const { db, sql, close } = createDb(url);
-  await sql`TRUNCATE reports, appointments, exam_types, users CASCADE`;
-  await seed(db);
+  // --if-empty: usado na subida do container; só semeia um banco novo, nunca apaga dados.
+  const [row] = await sql<{ count: number }[]>`SELECT count(*)::int AS count FROM users`;
+  if (process.argv.includes('--if-empty') && (row?.count ?? 0) > 0) {
+    process.stdout.write('seed: banco já tem dados, nada a fazer\n');
+  } else {
+    await sql`TRUNCATE reports, appointments, exam_types, users CASCADE`;
+    await seed(db);
+    process.stdout.write('seed: dados de demonstração carregados\n');
+  }
   await close();
 }

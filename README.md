@@ -55,36 +55,67 @@ docs/         requisitos, arquitetura, segurança, testes, ADRs, roteiro de test
 
 ## Como executar
 
-Requisitos: Docker; para o modo local, também Node 24 (ver `.nvmrc`) e pnpm via Corepack (`corepack enable`).
+### Jeito rápido (recomendado): só com Docker
 
-**Com Docker (caminho principal)**
+**Você precisa de:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e **aberto**. Não precisa de Node nem de pnpm.
 
 ```bash
-cp .env.example .env
-docker compose up --build -d
-docker compose exec api node src/db/seed.ts   # contas e dados de demonstração
+git clone https://github.com/renatomf/healthtech.git
+cd healthtech
+cp .env.example .env            # Windows (PowerShell): Copy-Item .env.example .env
+docker compose up --build -d    # 1ª vez: 2 a 5 minutos
 ```
 
-Abra http://localhost:5173 e entre com uma das [contas de demonstração](#contas-de-demonstração).
+Pronto. Abra **http://localhost:5173** e entre com:
 
-| Serviço    | Endereço                                 |
-| ---------- | ---------------------------------------- |
-| Web        | http://localhost:5173                    |
-| API        | http://localhost:3333 (`/health/live`)   |
-| PostgreSQL | `localhost:55432` (`POSTGRES_HOST_PORT`) |
+| E-mail               | Senha       | Perfil            |
+| -------------------- | ----------- | ----------------- |
+| `clinica@demo.local` | `Demo@1234` | Equipe da clínica |
+| `joao@demo.local`    | `Demo@1234` | Paciente          |
 
-A API aplica as migrations pendentes e valida o `.env` com Zod ao iniciar; não sobe se algo estiver inválido (lista as variáveis com problema, sem repetir valores). O banco usa a porta 55432 no host para não colidir com um Postgres já instalado na máquina.
+Ao subir, a API cria as tabelas e, **se o banco estiver vazio**, carrega os dados de demonstração sozinha. Não há passo extra.
 
-**Local (desenvolvimento)**
+**Como saber se deu certo:** `docker compose ps` mostra `db` e `api` como `healthy`, e http://localhost:3333/health/live responde `{"status":"ok"}`.
+
+| Quero…                                    | Comando                                       |
+| ----------------------------------------- | --------------------------------------------- |
+| Parar                                     | `docker compose down`                         |
+| Voltar os dados de demonstração ao início | `docker compose exec api node src/db/seed.ts` |
+| Apagar tudo, inclusive o banco            | `docker compose down -v`                      |
+| Ver os logs da API                        | `docker compose logs -f api`                  |
+
+| Serviço         | Endereço                                                                     |
+| --------------- | ---------------------------------------------------------------------------- |
+| Aplicação (web) | http://localhost:5173                                                        |
+| API             | http://localhost:3333                                                        |
+| PostgreSQL      | `localhost:55432` (porta alta para não colidir com um Postgres já instalado) |
+
+### Se algo der errado
+
+| Sintoma                                                             | O que fazer                                                                                            |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `Cannot connect to the Docker daemon` / `docker: command not found` | Abra o Docker Desktop e espere ele ficar "running"                                                     |
+| `port is already allocated`                                         | Outra coisa usa a porta 5173, 3333 ou 55432. Feche-a, ou troque `POSTGRES_HOST_PORT` no `.env` (banco) |
+| `cp` não existe (Windows)                                           | Use `Copy-Item .env.example .env` (PowerShell) ou `copy .env.example .env` (cmd)                       |
+| API não sobe e o log diz "Variáveis de ambiente inválidas"          | O `.env` está faltando ou incompleto: copie de novo do `.env.example`                                  |
+| "E-mail ou senha incorretos" com as contas acima                    | Os dados foram apagados: rode `docker compose exec api node src/db/seed.ts`                            |
+| "Muitas tentativas" no login                                        | Limite de 5 tentativas por minuto: espere um minuto                                                    |
+
+### Desenvolvimento local (opcional)
+
+Para mexer no código com recarga automática. **Você precisa de:** Docker (só para o banco), Node 24 (ver `.nvmrc`) e pnpm (`corepack enable` habilita a versão certa).
 
 ```bash
 cp .env.example .env
+corepack enable
 pnpm install
-docker compose up -d db
-pnpm db:migrate
-pnpm db:seed
-pnpm dev            # API (node --watch) + web (Vite)
+docker compose up -d db     # só o banco
+pnpm db:migrate             # cria as tabelas
+pnpm db:seed                # carrega os dados de demonstração
+pnpm dev                    # API em :3333 e web em :5173, com recarga automática
 ```
+
+Se o stack completo do Docker estiver rodando, pare antes os serviços `api` e `web` (`docker compose stop api web`), porque usam as mesmas portas.
 
 ## Banco e dados fictícios
 
@@ -95,7 +126,7 @@ pnpm dev            # API (node --watch) + web (Vite)
 | `pnpm db:reset`    | Apaga o banco, aplica as migrations e roda o seed                                     |
 | `pnpm db:generate` | Gera migration a partir de `schema.ts` (só desenvolvimento; nunca `drizzle-kit push`) |
 
-O seed apaga os dados e recria tudo com datas **relativas a hoje** (fuso da clínica), então funciona em qualquer dia:
+Com Docker, os dados de demonstração são carregados sozinhos na primeira subida. O seed manual apaga os dados e recria tudo com datas **relativas a hoje** (fuso da clínica), então funciona em qualquer dia:
 
 ```bash
 pnpm db:seed                                  # local
