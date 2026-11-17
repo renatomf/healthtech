@@ -84,6 +84,12 @@ body {
 /* Cursor de texto só onde se digita; mão só no que é clicável. */
 body {
   cursor: default;
+  /* Sem cursor piscando em texto comum (aparece com a navegação por cursor do navegador, F7). */
+  caret-color: transparent;
+}
+input,
+textarea {
+  caret-color: auto;
 }
 a[href],
 button:not(:disabled),
