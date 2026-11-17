@@ -4,41 +4,91 @@
 
 Aplicação web para uma clínica agendar exames, cadastrar laudos (rascunho → publicado) e disponibilizá-los ao paciente.
 
+## Como rodar em 1 minuto
+
+Você só precisa do **Docker Desktop**. Não precisa instalar Node, banco de dados nem configurar nada.
+
+**1. Instale e abra o Docker Desktop** → [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/). Espere ele mostrar _Engine running_.
+
+**2. Baixe o projeto**, de um destes jeitos:
+
+- Com Git: `git clone https://github.com/renatomf/healthtech.git` e depois `cd healthtech`
+- Sem Git: no GitHub, clique em **Code → Download ZIP**, extraia e abra um terminal dentro da pasta extraída
+  (Windows: abra a pasta no Explorador, clique na barra de endereço, digite `cmd` e aperte Enter)
+
+**3. No terminal, dentro da pasta do projeto, rode:**
+
+```bash
+docker compose up -d
+```
+
+Na primeira vez leva de 2 a 5 minutos (baixa e monta tudo). Nas próximas, segundos.
+
+**4. Abra http://localhost:5173 e entre** com uma das contas (a senha de todas é `Demo@1234`):
+
+| E-mail               | Quem é                                                     |
+| -------------------- | ---------------------------------------------------------- |
+| `clinica@demo.local` | Equipe da clínica: agenda exames, escreve e publica laudos |
+| `joao@demo.local`    | Paciente: vê os próprios exames e lê os laudos publicados  |
+| `maria@demo.local`   | Outra paciente (para ver que um não enxerga o outro)       |
+
+Os dados de demonstração já vêm carregados. Para **parar**: `docker compose down`. Não abriu? Veja [Se algo der errado](#se-algo-der-errado).
+
+## Telas
+
+**Equipe da clínica** — agenda do dia e editor de laudo:
+
+![Agenda da equipe da clínica](docs/images/clinica-agenda.png)
+
+![Laudo em rascunho, pronto para publicar](docs/images/clinica-laudo.png)
+
+**Paciente** — no celular, exames e leitura do laudo:
+
+<p>
+  <img src="docs/images/paciente-inicio.png" alt="Início do paciente com o próximo exame" width="300">
+  &nbsp;
+  <img src="docs/images/paciente-laudo.png" alt="Laudo publicado aberto pelo paciente" width="300">
+</p>
+
+---
+
 **Em uma frase:** as regras críticas (horário único, laudo imutável, paciente só vê o que é dele) são garantidas pelo banco e pela consulta, não só pela tela, e cada uma tem um teste que a prova — inclusive sob concorrência e com o servidor em outro fuso.
 
 **Stack:** React + Vite + TypeScript · Fastify + TypeScript · PostgreSQL + Drizzle · Vitest + Testcontainers + Playwright · Docker Compose · pnpm workspaces.
 
 ## Sumário
 
-1. [Entrega](#entrega)
-2. [Como executar](#como-executar)
-3. [Banco e dados fictícios](#banco-e-dados-fictícios)
-4. [Contas de demonstração](#contas-de-demonstração)
-5. [Testes](#testes)
-6. [Variáveis de ambiente](#variáveis-de-ambiente)
-7. [Matriz de requisitos](#matriz-de-requisitos)
-8. [Roteiro de avaliação](#roteiro-de-avaliação)
-9. [Decisões técnicas](#decisões-técnicas)
-10. [Fuso horário adotado](#fuso-horário-adotado)
-11. [Limitações e pendências](#limitações-e-pendências)
-12. [Tempo dedicado](#tempo-dedicado)
-13. [Créditos](#créditos)
-14. [Uso de IA](#uso-de-ia)
+1. [Como rodar em 1 minuto](#como-rodar-em-1-minuto)
+2. [Telas](#telas)
+3. [Entrega](#entrega)
+4. [Como executar](#como-executar)
+5. [Banco e dados fictícios](#banco-e-dados-fictícios)
+6. [Contas de demonstração](#contas-de-demonstração)
+7. [Testes](#testes)
+8. [Variáveis de ambiente](#variáveis-de-ambiente)
+9. [Matriz de requisitos](#matriz-de-requisitos)
+10. [Roteiro de avaliação](#roteiro-de-avaliação)
+11. [Decisões técnicas](#decisões-técnicas)
+12. [Fuso horário adotado](#fuso-horário-adotado)
+13. [Limitações e pendências](#limitações-e-pendências)
+14. [Tempo dedicado](#tempo-dedicado)
+15. [Créditos](#créditos)
+16. [Uso de IA](#uso-de-ia)
 
 ## Entrega
 
 O que o enunciado pede e onde está:
 
-| Item pedido                                                      | Onde está                                                                                                                                                         |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Código do frontend e do backend                                  | [`apps/web`](apps/web) (React + Vite), [`apps/api`](apps/api) (Fastify), [`packages/shared`](packages/shared) (contratos Zod e fuso usados pelos dois)            |
-| Instruções para instalar e executar                              | [Como executar](#como-executar): com Docker (um comando) ou local com `pnpm dev`                                                                                  |
-| Preparar o banco e carregar dados fictícios                      | [Banco e dados fictícios](#banco-e-dados-fictícios): migrations aplicadas ao subir a API; seed com datas relativas a hoje                                         |
-| Credenciais das contas de demonstração                           | [Contas de demonstração](#contas-de-demonstração) (também visíveis na tela de login)                                                                              |
-| Instruções para executar os testes                               | [Testes](#testes): unitários, integração com Postgres real, E2E com Playwright + axe                                                                              |
-| Arquivo de exemplo das variáveis de ambiente, sem segredos reais | [`.env.example`](.env.example) (só valores de desenvolvimento; o `JWT_SECRET` de exemplo pede para ser trocado) e [Variáveis de ambiente](#variáveis-de-ambiente) |
-| Decisões técnicas, limitações e pendências                       | [Decisões técnicas](#decisões-técnicas), [Fuso horário adotado](#fuso-horário-adotado), [Limitações e pendências](#limitações-e-pendências)                       |
-| Tempo aproximado dedicado                                        | [Tempo dedicado](#tempo-dedicado)                                                                                                                                 |
+| Item pedido                                                      | Onde está                                                                                                                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Código do frontend e do backend                                  | [`apps/web`](apps/web) (React + Vite), [`apps/api`](apps/api) (Fastify), [`packages/shared`](packages/shared) (contratos Zod e fuso usados pelos dois)             |
+| Instruções para instalar e executar                              | [Como rodar em 1 minuto](#como-rodar-em-1-minuto) (só Docker) e [Como executar](#como-executar) (comandos do dia a dia, problemas comuns, modo de desenvolvimento) |
+| Preparar o banco e carregar dados fictícios                      | [Banco e dados fictícios](#banco-e-dados-fictícios): migrations aplicadas ao subir a API; seed com datas relativas a hoje                                          |
+| Credenciais das contas de demonstração                           | [Contas de demonstração](#contas-de-demonstração) (também visíveis na tela de login)                                                                               |
+| Instruções para executar os testes                               | [Testes](#testes): unitários, integração com Postgres real, E2E com Playwright + axe                                                                               |
+| Arquivo de exemplo das variáveis de ambiente, sem segredos reais | [`.env.example`](.env.example) (só valores de desenvolvimento; o `JWT_SECRET` de exemplo pede para ser trocado) e [Variáveis de ambiente](#variáveis-de-ambiente)  |
+| Decisões técnicas, limitações e pendências                       | [Decisões técnicas](#decisões-técnicas), [Fuso horário adotado](#fuso-horário-adotado), [Limitações e pendências](#limitações-e-pendências)                        |
+| Tempo aproximado dedicado                                        | [Tempo dedicado](#tempo-dedicado)                                                                                                                                  |
 
 Além do pedido: [roteiro de teste manual](docs/ROTEIRO_TESTE.md) passo a passo, [matriz requisito → garantia → teste](#matriz-de-requisitos), CI no GitHub Actions e [registro do uso de IA](docs/PROCESSO_IA.md) (vibe coding é requisito do desafio).
 
@@ -55,25 +105,7 @@ docs/         requisitos, arquitetura, segurança, testes, ADRs, roteiro de test
 
 ## Como executar
 
-### Jeito rápido (recomendado): só com Docker
-
-**Você precisa de:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e **aberto**. Não precisa de Node nem de pnpm.
-
-```bash
-git clone https://github.com/renatomf/healthtech.git
-cd healthtech
-cp .env.example .env            # Windows (PowerShell): Copy-Item .env.example .env
-docker compose up --build -d    # 1ª vez: 2 a 5 minutos
-```
-
-Pronto. Abra **http://localhost:5173** e entre com:
-
-| E-mail               | Senha       | Perfil            |
-| -------------------- | ----------- | ----------------- |
-| `clinica@demo.local` | `Demo@1234` | Equipe da clínica |
-| `joao@demo.local`    | `Demo@1234` | Paciente          |
-
-Ao subir, a API cria as tabelas e, **se o banco estiver vazio**, carrega os dados de demonstração sozinha. Não há passo extra.
+O passo a passo para leigos está em [Como rodar em 1 minuto](#como-rodar-em-1-minuto). Aqui ficam os detalhes.
 
 **Como saber se deu certo:** `docker compose ps` mostra `db` e `api` como `healthy`, e http://localhost:3333/health/live responde `{"status":"ok"}`.
 
@@ -92,14 +124,14 @@ Ao subir, a API cria as tabelas e, **se o banco estiver vazio**, carrega os dado
 
 ### Se algo der errado
 
-| Sintoma                                                             | O que fazer                                                                                            |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `Cannot connect to the Docker daemon` / `docker: command not found` | Abra o Docker Desktop e espere ele ficar "running"                                                     |
-| `port is already allocated`                                         | Outra coisa usa a porta 5173, 3333 ou 55432. Feche-a, ou troque `POSTGRES_HOST_PORT` no `.env` (banco) |
-| `cp` não existe (Windows)                                           | Use `Copy-Item .env.example .env` (PowerShell) ou `copy .env.example .env` (cmd)                       |
-| API não sobe e o log diz "Variáveis de ambiente inválidas"          | O `.env` está faltando ou incompleto: copie de novo do `.env.example`                                  |
-| "E-mail ou senha incorretos" com as contas acima                    | Os dados foram apagados: rode `docker compose exec api node src/db/seed.ts`                            |
-| "Muitas tentativas" no login                                        | Limite de 5 tentativas por minuto: espere um minuto                                                    |
+| Sintoma                                                             | O que fazer                                                                                                       |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `Cannot connect to the Docker daemon` / `docker: command not found` | Abra o Docker Desktop e espere ele ficar "running"                                                                |
+| `port is already allocated`                                         | Outra coisa usa a porta 5173, 3333 ou 55432. Feche-a, ou troque `POSTGRES_HOST_PORT` no `.env` (banco)            |
+| `docker compose` não é reconhecido                                  | Docker Desktop desatualizado: atualize (o Compose v2 vem junto)                                                   |
+| API não sobe e o log diz "Variáveis de ambiente inválidas"          | Você criou um `.env` com algum valor errado: apague-o (o projeto roda sem ele) ou copie de novo do `.env.example` |
+| "E-mail ou senha incorretos" com as contas acima                    | Os dados foram apagados: rode `docker compose exec api node src/db/seed.ts`                                       |
+| "Muitas tentativas" no login                                        | Limite de 5 tentativas por minuto: espere um minuto                                                               |
 
 ### Desenvolvimento local (opcional)
 
@@ -152,6 +184,14 @@ docker compose exec api node src/db/seed.ts   # com Docker
 
 ## Testes
 
+Rodar a aplicação só precisa do Docker. **Rodar os testes precisa também de Node 24 e pnpm:**
+
+```bash
+corepack enable          # habilita o pnpm na versão certa (vem com o Node)
+pnpm install
+cp .env.example .env     # Windows (cmd): copy .env.example .env
+```
+
 | Comando                 | O que roda                                                                                                                          | Requisitos                                           |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `pnpm test:unit`        | Regras de domínio, fuso, mensagens do front                                                                                         | —                                                    |
@@ -165,7 +205,7 @@ Os 5 cenários do enunciado estão em `describe('Cenário N — …')`: [agendam
 
 ## Variáveis de ambiente
 
-Exemplo completo, sem segredos reais, em [`.env.example`](.env.example). A API valida tudo com Zod ao iniciar.
+Com Docker, **nenhuma é obrigatória**: o `docker-compose.yml` traz valores padrão de desenvolvimento. Para trocar alguma, copie [`.env.example`](.env.example) para `.env` (sem segredos reais). No modo de desenvolvimento local e para os testes, o `.env` é necessário. A API valida tudo com Zod ao iniciar.
 
 | Variável                                            | Padrão / exemplo                      | Uso                                                           |
 | --------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------- |

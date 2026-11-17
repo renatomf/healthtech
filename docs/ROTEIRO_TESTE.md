@@ -7,10 +7,10 @@ Passo a passo para conferir o sistema pela interface, do agendamento à leitura 
 ## 0. Preparar
 
 ```bash
-cp .env.example .env
-docker compose up --build -d
-docker compose exec api node src/db/seed.ts
+docker compose up -d
 ```
+
+Os dados de demonstração já vêm carregados (passo a passo completo no README, em "Como rodar em 1 minuto").
 
 Abra **http://localhost:5173**. Senha de todas as contas: `Demo@1234`.
 
