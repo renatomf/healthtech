@@ -73,7 +73,6 @@ Os dados de demonstração já vêm carregados. Para **parar**: `docker compose 
 13. [Limitações e pendências](#limitações-e-pendências)
 14. [Tempo dedicado](#tempo-dedicado)
 15. [Créditos](#créditos)
-16. [Uso de IA](#uso-de-ia)
 
 ## Entrega
 
@@ -90,7 +89,7 @@ O que o enunciado pede e onde está:
 | Decisões técnicas, limitações e pendências                       | [Decisões técnicas](#decisões-técnicas), [Fuso horário adotado](#fuso-horário-adotado), [Limitações e pendências](#limitações-e-pendências)                        |
 | Tempo aproximado dedicado                                        | [Tempo dedicado](#tempo-dedicado)                                                                                                                                  |
 
-Além do pedido: [roteiro de teste manual](docs/ROTEIRO_TESTE.md) passo a passo, [matriz requisito → garantia → teste](#matriz-de-requisitos), CI no GitHub Actions e [registro do uso de IA](docs/PROCESSO_IA.md) (vibe coding é requisito do desafio).
+Além do pedido: [roteiro de teste manual](docs/ROTEIRO_TESTE.md) passo a passo, [matriz requisito → garantia → teste](#matriz-de-requisitos) e CI no GitHub Actions.
 
 ```
 apps/
@@ -100,7 +99,7 @@ packages/
   shared/     contratos Zod (request/response) e utilitários de fuso
 e2e/          Playwright + axe
 scripts/      demo-race.ts (10 reservas simultâneas)
-docs/         requisitos, arquitetura, segurança, testes, ADRs, roteiro de teste, processo com IA
+docs/         requisitos, arquitetura, segurança, testes, ADRs, roteiro de teste
 ```
 
 ## Como executar
@@ -308,7 +307,3 @@ Detalhe em [`docs/TEMPO.md`](docs/TEMPO.md).
 ## Créditos
 
 Foto da tela de login: banco de imagens [Pexels](https://www.pexels.com) ([licença Pexels](https://www.pexels.com/license/): uso livre, sem atribuição obrigatória), fornecida pelo autor e recortada (fundo removido) para compor o painel. Ícones: [Lucide](https://lucide.dev). Fonte: [Geist](https://vercel.com/font).
-
-## Uso de IA
-
-Vibe coding é requisito do desafio. Processo, prompts e correções em [`docs/PROCESSO_IA.md`](docs/PROCESSO_IA.md).
