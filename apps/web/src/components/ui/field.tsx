@@ -49,6 +49,22 @@ export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElem
   return <input className={cn(control, 'h-12', className)} {...props} />;
 }
 
+/** Próxima opção ativa para teclas de navegação; null se a tecla não navega. */
+function nextIndex(key: string, active: number, last: number): number | null {
+  switch (key) {
+    case 'ArrowDown':
+      return Math.min(active + 1, last);
+    case 'ArrowUp':
+      return Math.max(active - 1, 0);
+    case 'Home':
+      return 0;
+    case 'End':
+      return last;
+    default:
+      return null;
+  }
+}
+
 export interface SelectOption {
   value: string;
   label: string;
@@ -99,17 +115,10 @@ export function Select({ id, value, options, onChange, ...aria }: SelectProps) {
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    const last = options.length - 1;
-    const moves: Record<string, () => number> = {
-      ArrowDown: () => Math.min(active + 1, last),
-      ArrowUp: () => Math.max(active - 1, 0),
-      Home: () => 0,
-      End: () => last,
-    };
-    const move = moves[e.key];
-    if (move) {
+    const target = nextIndex(e.key, active, options.length - 1);
+    if (target !== null) {
       e.preventDefault();
-      if (open) setActive(move());
+      if (open) setActive(target);
       else show();
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -151,7 +160,7 @@ export function Select({ id, value, options, onChange, ...aria }: SelectProps) {
           aria-hidden
         />
       </button>
-      <ul
+      <div
         id={listId}
         role="listbox"
         hidden={!open}
@@ -160,10 +169,11 @@ export function Select({ id, value, options, onChange, ...aria }: SelectProps) {
         {options.map((option, index) => {
           const isSelected = option.value === value;
           return (
-            <li
+            <div
               key={option.value}
               id={`${listId}-${index}`}
               role="option"
+              tabIndex={-1}
               aria-selected={isSelected}
               onMouseEnter={() => setActive(index)}
               // mousedown + preventDefault: escolhe sem tirar o foco do botão.
@@ -179,10 +189,10 @@ export function Select({ id, value, options, onChange, ...aria }: SelectProps) {
             >
               {option.label}
               {isSelected && <Check className="size-4 shrink-0" strokeWidth={1.75} aria-hidden />}
-            </li>
+            </div>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
