@@ -26,17 +26,17 @@ Toda decisão de acesso é tomada no backend e nega por padrão. Dados de um pac
 
 ## Ameaças e mitigações
 
-| Ameaça (OWASP API 2023)                         | Aqui                                                      | Mitigação                                                                     |
-| ----------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| API1 Broken Object Level Authorization          | Paciente troca o ID na URL                                | Escopo na query + 404 + cenário obrigatório 2                                 |
-| API2 Broken Authentication                      | Força bruta, token roubado                                | Rate limit, bcrypt, cookie httpOnly, expiração 8 h                            |
-| API3 Broken Object Property Level Authorization | Rascunho vaza em campo extra; mass assignment de `status` | DTO por perfil; Zod `.strict()`; `status`/`published_at` nunca vêm do cliente |
-| API4 Unrestricted Resource Consumption          | Laudo gigante, listagem sem limite                        | `body` ≤ 20.000 caracteres, `bodyLimit` 100 KB, `limit` ≤ 100                 |
-| API5 Broken Function Level Authorization        | Paciente chama rota da clínica                            | Hook por grupo + varredura de rotas                                           |
-| API8 Security Misconfiguration                  | Stack trace exposto, CORS aberto                          | 500 genérico; `@fastify/helmet`; CORS só `WEB_ORIGIN` com `credentials`       |
-| SQL injection                                   | Filtro por nome                                           | Drizzle parametriza; `sql.raw` com entrada proibido                           |
-| XSS                                             | `<script>` no laudo                                       | React escapa; laudo como texto; sem `dangerouslySetInnerHTML`; CSP            |
-| CSRF                                            | POST cross-site com cookie                                | `SameSite=Lax`; mutações só `application/json`; checagem de `Origin`          |
+| Ameaça (OWASP API 2023)                         | Aqui                                                      | Mitigação                                                                                                                                                   |
+| ----------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| API1 Broken Object Level Authorization          | Paciente troca o ID na URL                                | Escopo na query + 404 + cenário obrigatório 2                                                                                                               |
+| API2 Broken Authentication                      | Força bruta, token roubado                                | Rate limit, bcrypt, cookie httpOnly, expiração 8 h                                                                                                          |
+| API3 Broken Object Property Level Authorization | Rascunho vaza em campo extra; mass assignment de `status` | DTO por perfil; Zod `.strict()`; `status`/`published_at` nunca vêm do cliente                                                                               |
+| API4 Unrestricted Resource Consumption          | Laudo gigante, listagem sem limite                        | `body` ≤ 20.000 caracteres, `bodyLimit` 100 KB, `limit` ≤ 100                                                                                               |
+| API5 Broken Function Level Authorization        | Paciente chama rota da clínica                            | Hook por grupo + varredura de rotas                                                                                                                         |
+| API8 Security Misconfiguration                  | Stack trace exposto, CORS aberto                          | 500 genérico; `@fastify/helmet`; CORS só `WEB_ORIGIN` com `credentials`                                                                                     |
+| SQL injection                                   | Filtro por nome                                           | Drizzle parametriza; `sql.raw` com entrada proibido                                                                                                         |
+| XSS                                             | `<script>` no laudo                                       | React escapa; laudo como texto; sem `dangerouslySetInnerHTML`; CSP na API (helmet); no front, pendência                                                     |
+| CSRF                                            | POST cross-site com cookie                                | `SameSite=Lax`; mutações só em `application/json` (formulário de outro site não envia JSON sem passar pelo CORS). Checagem explícita de `Origin`: pendência |
 
 ## Segurança verificável pelo avaliador
 

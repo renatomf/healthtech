@@ -179,7 +179,7 @@ POST /clinic/appointments/:id/report/publish
 GET  /patient/appointments                    (tipo, data, situação, hasPublishedReport)
 GET  /patient/appointments/:id/report         (só publicado e do próprio paciente)
 
-GET  /health/live · GET /health/ready · GET /docs (Swagger)
+GET  /health/live
 ```
 
 ### Mapeamento de erros (Problem Details, RFC 9457, com `code` e `traceId`)

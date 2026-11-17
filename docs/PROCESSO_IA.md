@@ -79,7 +79,3 @@
 - Constraints, migrations e trigger
 - Transações e `FOR UPDATE`
 - Tratamento de fuso horário
-
-## Proporção
-
-Aproximadamente __% do código gerado por IA; __% do tempo em revisão e correção.

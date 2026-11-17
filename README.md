@@ -362,10 +362,10 @@ Pendências para produção (revogação de sessão, MFA, auditoria de leitura, 
 
 ## Tempo dedicado
 
-| Etapa                                                             | Quando                                     | Tempo                    |
-| ----------------------------------------------------------------- | ------------------------------------------ | ------------------------ |
-| Brainstorming, arquitetura e documentação inicial (`docs/`, ADRs) | antes do primeiro commit                   | _a preencher pelo autor_ |
-| Implementação, testes, front e ajustes (42 commits)               | 16/11, 17:21 → 23:30 (horário de Brasília) | ~6h10                    |
+| Etapa                                                                     | Quando                                     | Tempo                    |
+| ------------------------------------------------------------------------- | ------------------------------------------ | ------------------------ |
+| Planejamento: requisitos, arquitetura, segurança, testes e ADRs (`docs/`) | antes do primeiro commit                   | etapa anterior ao código |
+| Implementação, testes, front e ajustes                                    | 16/11, 17:21 → 23:35 (horário de Brasília) | ~6h15                    |
 
 Detalhe em [`docs/TEMPO.md`](docs/TEMPO.md).
 

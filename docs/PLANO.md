@@ -33,10 +33,9 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 ## Antes de enviar
 
 - [x] Clonar em diretório limpo e seguir só o README até os testes passarem — 16/11: clone sem `.env` → `docker compose up -d` (build do zero, seed automático, login das duas contas) → `pnpm install` → `pnpm verify` (66) → `pnpm test:e2e` (13)
-- [ ] `git log` sem `.env`, segredos ou arquivos gerados
-- [ ] Nenhum `TODO`, `console.log`, `.skip` ou código comentado
+- [x] `git log` sem `.env`, segredos ou arquivos gerados (gitleaks no CI)
+- [x] Nenhum `TODO`, `console.log`, `.skip` ou código comentado
 - [ ] Roteiro de avaliação executado manualmente
-- [ ] Ensaio: índice parcial vs checagem na app; cancelar × publicar; 404 vs 403; várias salas; onde a IA errou
 
 ## Seed (datas relativas a `now()` no fuso da clínica)
 

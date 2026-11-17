@@ -8,7 +8,7 @@ Front e back precisam concordar sobre formatos, e respostas não podem vazar cam
 
 ## Decisão
 
-Fastify + `fastify-type-provider-zod`; schemas em `packages/shared` usados em validação, serialização e formulários; OpenAPI em `/docs`.
+Fastify + `fastify-type-provider-zod`; schemas em `packages/shared` usados em validação, serialização e formulários. OpenAPI em `/docs` ficou como pendência (não implementado no prazo).
 
 ## Alternativas
 

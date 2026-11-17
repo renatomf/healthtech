@@ -7,19 +7,18 @@ Unitários provam regras de domínio; integração com Postgres real prova conco
 | Camada             | Ferramenta                               | O que prova                                                                                                                        | Qtde aprox. |
 | ------------------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | Unitário (domínio) | Vitest                                   | `isValidSlot`, `isInPast`, `assertCanCancel`, `assertCanReceiveReport`, `assertCanEditReport`, `clinicDayRange`, `listClinicSlots` | 30–40       |
-| Unitário (front)   | Vitest + Testing Library + MSW           | Mensagem de 409, badge de rascunho, formatação de data                                                                             | 10–15       |
+| Unitário (front)   | Vitest                                   | Mensagem exibida para cada `code` de erro da API (as telas são cobertas pelo E2E)                                                  | 3           |
 | Integração         | Vitest + `app.inject()` + Testcontainers | 5 cenários obrigatórios, corridas, autorização rota a rota, constraints                                                            | 25–35       |
 | E2E                | Playwright + axe                         | 3 fluxos + acessibilidade                                                                                                          | 3 + axe     |
 
 ## Configuração
 
-- `vitest.config.ts` na raiz com `test.projects` `unit`, `integration`, `web` (`vitest.workspace.ts` está obsoleto no Vitest atual).
+- `vitest.config.ts` na raiz com `test.projects` `unit` e `integration` (`vitest.workspace.ts` está obsoleto no Vitest atual).
 - Testcontainers: `globalSetup` sobe Postgres uma vez, roda as **migrations reais**, exporta `DATABASE_URL`. Entre testes: `TRUNCATE … RESTART IDENTITY CASCADE`. Sem transação-rollback por teste (impediria o teste de concorrência).
 - Relógio: `FixedClock` injetado. Sem `vi.useFakeTimers()` no backend.
 - Pool de conexões nos testes ≥ 10 (concorrência real).
 - CI roda a suíte com `TZ=UTC` **e** `TZ=Asia/Tokyo`.
-- Cobertura: `@vitest/coverage-v8`, mínimo 90% de linhas em `modules/*/domain`; sem meta global.
-- Opcional: Stryker (mutação) só no domínio.
+- Sem meta de cobertura configurada: a confiança vem dos testes por regra, dos 5 cenários e do E2E.
 
 ## Cenários obrigatórios
 
@@ -60,5 +59,5 @@ Seletores por papel/rótulo; `pnpm db:reset` antes (global-setup); `trace: 'reta
 - Factories (`makePatient()`, `makeAppointment({ status: 'CANCELED' })`).
 - Verificar efeito (banco, ausência de dados no corpo), não só status.
 - Sem `sleep`, `retry`, `.skip`, `.only`.
-- Mocks só na fronteira (MSW, `FixedClock`). Nunca mock de repositório/banco.
+- Mocks só na fronteira (`FixedClock`). Nunca mock de repositório/banco.
 - Vermelho antes do verde: testes obrigatórios commitados falhando antes da implementação.
