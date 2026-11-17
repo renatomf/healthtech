@@ -68,26 +68,27 @@ Os dados de demonstração já vêm carregados. Para **parar**: `docker compose 
 8. [Variáveis de ambiente](#variáveis-de-ambiente)
 9. [Matriz de requisitos](#matriz-de-requisitos)
 10. [Roteiro de avaliação](#roteiro-de-avaliação)
-11. [Decisões técnicas](#decisões-técnicas)
-12. [Fuso horário adotado](#fuso-horário-adotado)
-13. [Limitações e pendências](#limitações-e-pendências)
-14. [Tempo dedicado](#tempo-dedicado)
-15. [Créditos](#créditos)
+11. [Arquitetura](#arquitetura)
+12. [Decisões técnicas](#decisões-técnicas)
+13. [Fuso horário adotado](#fuso-horário-adotado)
+14. [Limitações e pendências](#limitações-e-pendências)
+15. [Tempo dedicado](#tempo-dedicado)
+16. [Créditos](#créditos)
 
 ## Entrega
 
 O que o enunciado pede e onde está:
 
-| Item pedido                                                      | Onde está                                                                                                                                                          |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Código do frontend e do backend                                  | [`apps/web`](apps/web) (React + Vite), [`apps/api`](apps/api) (Fastify), [`packages/shared`](packages/shared) (contratos Zod e fuso usados pelos dois)             |
-| Instruções para instalar e executar                              | [Como rodar em 1 minuto](#como-rodar-em-1-minuto) (só Docker) e [Como executar](#como-executar) (comandos do dia a dia, problemas comuns, modo de desenvolvimento) |
-| Preparar o banco e carregar dados fictícios                      | [Banco e dados fictícios](#banco-e-dados-fictícios): migrations aplicadas ao subir a API; seed com datas relativas a hoje                                          |
-| Credenciais das contas de demonstração                           | [Contas de demonstração](#contas-de-demonstração) (também visíveis na tela de login)                                                                               |
-| Instruções para executar os testes                               | [Testes](#testes): unitários, integração com Postgres real, E2E com Playwright + axe                                                                               |
-| Arquivo de exemplo das variáveis de ambiente, sem segredos reais | [`.env.example`](.env.example) (só valores de desenvolvimento; o `JWT_SECRET` de exemplo pede para ser trocado) e [Variáveis de ambiente](#variáveis-de-ambiente)  |
-| Decisões técnicas, limitações e pendências                       | [Decisões técnicas](#decisões-técnicas), [Fuso horário adotado](#fuso-horário-adotado), [Limitações e pendências](#limitações-e-pendências)                        |
-| Tempo aproximado dedicado                                        | [Tempo dedicado](#tempo-dedicado)                                                                                                                                  |
+| Item pedido                                                      | Onde está                                                                                                                                                                |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Código do frontend e do backend                                  | [`apps/web`](apps/web) (React + Vite), [`apps/api`](apps/api) (Fastify), [`packages/shared`](packages/shared) (contratos Zod e fuso usados pelos dois)                   |
+| Instruções para instalar e executar                              | [Como rodar em 1 minuto](#como-rodar-em-1-minuto) (só Docker) e [Como executar](#como-executar) (comandos do dia a dia, problemas comuns, modo de desenvolvimento)       |
+| Preparar o banco e carregar dados fictícios                      | [Banco e dados fictícios](#banco-e-dados-fictícios): migrations aplicadas ao subir a API; seed com datas relativas a hoje                                                |
+| Credenciais das contas de demonstração                           | [Contas de demonstração](#contas-de-demonstração) (também visíveis na tela de login)                                                                                     |
+| Instruções para executar os testes                               | [Testes](#testes): unitários, integração com Postgres real, E2E com Playwright + axe                                                                                     |
+| Arquivo de exemplo das variáveis de ambiente, sem segredos reais | [`.env.example`](.env.example) (só valores de desenvolvimento; o `JWT_SECRET` de exemplo pede para ser trocado) e [Variáveis de ambiente](#variáveis-de-ambiente)        |
+| Decisões técnicas, limitações e pendências                       | [Arquitetura](#arquitetura), [Decisões técnicas](#decisões-técnicas), [Fuso horário adotado](#fuso-horário-adotado), [Limitações e pendências](#limitações-e-pendências) |
+| Tempo aproximado dedicado                                        | [Tempo dedicado](#tempo-dedicado)                                                                                                                                        |
 
 Além do pedido: [roteiro de teste manual](docs/ROTEIRO_TESTE.md) passo a passo, [matriz requisito → garantia → teste](#matriz-de-requisitos) e CI no GitHub Actions.
 
@@ -251,7 +252,71 @@ Roteiro completo, passo a passo e com o resultado esperado de cada ação: **[`d
 8. **Fuso** — os horários são sempre de Brasília: mude o fuso do computador e recarregue, ou veja o teste E2E que roda o navegador em `Asia/Tokyo`.
 9. **Visual** — alterne claro/escuro no canto da tela; abra no celular (ou DevTools em 390 px).
 
+## Arquitetura
+
+Um **monólito modular** em TypeScript: uma API (Fastify) e um front (React) que compartilham os mesmos contratos, sobre um PostgreSQL que é a última palavra nas regras críticas. A escolha é deliberada para o tamanho do problema: um único deploy e uma transação local cobrem agendamento e laudo, sem a complexidade de serviços separados, e as fronteiras internas ficam claras o bastante para extrair um módulo no futuro.
+
+```mermaid
+flowchart LR
+  WEB["Front (React + Vite)<br/>telas da clínica e do paciente"]
+  SHARED["packages/shared<br/>contratos Zod + fuso"]
+  subgraph API["API (Fastify)"]
+    AUTH["login + perfil<br/>(nega por padrão)"]
+    ID["identity"]
+    SC["scheduling"]
+    RP["reports"]
+  end
+  DB[("PostgreSQL<br/>índice único parcial · CHECKs<br/>trigger · FOR UPDATE")]
+  WEB -- "JSON + cookie httpOnly" --> AUTH
+  AUTH --> ID & SC & RP
+  ID & SC & RP --> DB
+  SHARED -.-> WEB
+  SHARED -.-> API
+```
+
+### Módulos e camadas
+
+A API tem três módulos, um por área do negócio: **identity** (login, sessão, busca de pacientes), **scheduling** (agendamentos e horários) e **reports** (laudos e a visão do paciente). Cada módulo tem as mesmas quatro camadas, e cada uma só conhece a de baixo:
+
+| Camada        | O que faz                                                            | Exemplo                                                     |
+| ------------- | -------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `http`        | Rotas, validação da entrada e formato da resposta (Zod)              | `POST /clinic/appointments`                                 |
+| `application` | Casos de uso: orquestra, abre a transação, traduz regra em erro HTTP | `createAppointment`, `publishReport`                        |
+| `domain`      | Regras puras, sem banco nem framework, testadas com unitários        | `checkSlot` (grade, passado, expediente), `checkCanPublish` |
+| `infra`       | Consultas ao banco (Drizzle) e tradução dos erros do Postgres        | `insertAppointment` transforma o erro do índice em 409      |
+
+Essas fronteiras são verificadas no CI pelo `dependency-cruiser`: o `domain` não pode importar banco nem Fastify, e um módulo não pode usar o `infra` de outro. O relógio também é injetado (`Clock`), então "agora" é fixo nos testes e o domínio nunca chama `new Date()` sozinho.
+
+### O caminho de uma reserva
+
+O que acontece quando a clínica confirma um horário, e por que duas pessoas no mesmo horário não geram dois agendamentos:
+
+1. **Front:** a tela só mostra horários livres, mas isso é conveniência. A fonte da verdade é a API.
+2. **`http`:** o corpo é validado com o schema compartilhado (campos extras são recusados) e o grupo `/clinic` exige login com perfil de clínica.
+3. **`domain`:** `checkSlot` recusa horário fora da grade de 30 minutos, no passado ou fora do expediente, sempre no fuso da clínica.
+4. **`infra` + banco:** o `INSERT` vai direto, sem "verificar antes". Se outra reserva ganhou a corrida, o **índice único parcial** `uq_active_slot` recusa a segunda e a API devolve 409 `SLOT_UNAVAILABLE`. Agendamentos cancelados ficam fora do índice, por isso o horário deles volta a ficar livre.
+5. **Front:** recebe o 409, mostra "Esse horário acabou de ser ocupado" e recarrega a grade.
+
+Cancelar, salvar e publicar laudo seguem a mesma ideia com outro mecanismo: começam travando a linha do agendamento (`SELECT … FOR UPDATE`), então cancelar e publicar o mesmo exame ao mesmo tempo acontecem em fila, e o resultado é sempre um estado válido.
+
+### Onde cada garantia mora
+
+As regras importantes valem em mais de uma camada, para que um erro numa delas não vire um dado errado:
+
+- **Banco:** horário único entre os ativos, grade de 30 minutos, um laudo por agendamento, data de publicação obrigatória para laudo publicado, e um trigger que impede alterar laudo publicado mesmo por SQL direto.
+- **Domínio:** as mesmas regras com mensagens claras (passado, expediente, cancelado sem laudo, publicado sem cancelamento).
+- **Consulta:** o paciente só enxerga o que é dele porque o filtro pelo paciente do token está **dentro do SQL**, não num `if` depois. Laudo de outro paciente ou rascunho retorna 404, sem revelar que existe.
+- **Resposta:** cada perfil tem seu próprio formato de resposta; o do paciente nem tem campo para o texto do rascunho.
+
+### Front
+
+Organizado por perfil (`features/auth`, `features/clinic`, `features/patient`). Os dados vêm da API com TanStack Query, os formulários usam React Hook Form validado pelo **mesmo schema Zod** da API, e as datas são sempre exibidas no horário de Brasília pelos utilitários de `packages/shared`, independentemente do fuso do computador. Os componentes de interface são próprios e pequenos (botão, card, campo, selo, diálogo, select e calendário acessíveis), com tema claro e escuro por tokens de cor.
+
+A ligação entre os dois lados é o pacote `packages/shared`: se um contrato muda, front e API deixam de compilar juntos, e a quebra aparece no `pnpm verify` antes de chegar ao navegador.
+
 ## Decisões técnicas
+
+As escolhas que moldam a arquitetura acima, com o motivo de cada uma. Cada linha tem um ADR em `docs/adr/` com as alternativas consideradas.
 
 | Decisão                                                                                                      | Por quê                                                                                                                   | Detalhe                                             |
 | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
