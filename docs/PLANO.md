@@ -32,7 +32,7 @@ Se faltar tempo, corte nesta ordem: Stryker → Playwright → Swagger → CI. N
 
 ## Antes de enviar
 
-- [ ] Clonar em diretório limpo e seguir só o README até os testes passarem
+- [ ] Clonar em diretório limpo e seguir só o README até os testes passarem — instalação validada em 16/11 (clone limpo → `docker compose up` → login das duas contas em 68 s); falta rodar os testes a partir do clone
 - [ ] `git log` sem `.env`, segredos ou arquivos gerados
 - [ ] Nenhum `TODO`, `console.log`, `.skip` ou código comentado
 - [ ] Roteiro de avaliação executado manualmente
