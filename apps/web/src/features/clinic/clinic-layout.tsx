@@ -1,23 +1,24 @@
-import { CalendarDays, LogOut, Plus } from 'lucide-react';
-import { NavLink, Outlet } from 'react-router';
-import { Brand, ThemeToggle } from '../../components/brand.tsx';
+import { CalendarDays, Plus } from 'lucide-react';
+import { Link, NavLink, Outlet, useLocation } from 'react-router';
+import { Brand } from '../../components/brand.tsx';
+import { type MenuLink, UserMenu } from '../../components/user-menu.tsx';
 import { cn } from '../../lib/cn.ts';
-import { useLogout, useMe } from '../auth/use-auth.ts';
 
-const NAV = [
+const NEW_APPOINTMENT = '/clinica/agendamentos/novo';
+
+const NAV: MenuLink[] = [
   { to: '/clinica', label: 'Agenda', icon: CalendarDays, end: true },
-  { to: '/clinica/agendamentos/novo', label: 'Novo agendamento', icon: Plus, end: false },
+  { to: NEW_APPOINTMENT, label: 'Novo agendamento', icon: Plus },
 ];
 
 export function ClinicLayout() {
-  const me = useMe();
-  const logout = useLogout();
+  const { pathname } = useLocation();
 
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[16rem_1fr]">
-      <aside className="flex items-center justify-between gap-4 border-b border-border bg-surface px-4 py-3 lg:sticky lg:top-0 lg:h-dvh lg:flex-col lg:items-stretch lg:justify-start lg:border-r lg:border-b-0 lg:p-6">
+    <div className="min-h-dvh lg:grid lg:h-dvh lg:grid-cols-[16rem_1fr]">
+      <aside className="hidden flex-col border-r border-border bg-surface p-6 lg:flex">
         <Brand />
-        <nav aria-label="Principal" className="flex gap-1 lg:mt-12 lg:flex-col">
+        <nav aria-label="Principal" className="mt-12 flex flex-col gap-1">
           {NAV.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
@@ -33,31 +34,33 @@ export function ClinicLayout() {
               }
             >
               <Icon className="size-4" strokeWidth={1.5} aria-hidden />
-              <span className="hidden sm:inline">{label}</span>
+              {label}
             </NavLink>
           ))}
         </nav>
-        <div className="flex items-center gap-2 lg:mt-auto lg:flex-col lg:items-stretch">
-          <div className="hidden rounded-3xl bg-surface-muted p-4 lg:block">
-            <p className="text-sm">{me.data?.name}</p>
-            <p className="truncate text-xs text-muted">{me.data?.email}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <button
-              type="button"
-              onClick={() => logout.mutate()}
-              className="flex h-10 items-center gap-2 rounded-full px-3 text-sm text-muted transition hover:bg-surface-muted hover:text-foreground"
-            >
-              <LogOut className="size-4" strokeWidth={1.5} aria-hidden />
-              Sair
-            </button>
-          </div>
-        </div>
       </aside>
-      <main className="mx-auto w-full max-w-7xl p-4 sm:p-8">
-        <Outlet />
-      </main>
+
+      <div className="flex min-h-dvh flex-col lg:min-h-0">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-surface px-4 py-3 lg:static lg:justify-end lg:px-8">
+          <span className="lg:hidden">
+            <Brand />
+          </span>
+          <UserMenu links={NAV} />
+        </header>
+        <main className="mx-auto w-full max-w-7xl flex-1 p-4 pb-28 sm:p-6 sm:pb-28 lg:min-h-0 lg:overflow-y-auto lg:p-8">
+          <Outlet />
+        </main>
+      </div>
+
+      {pathname !== NEW_APPOINTMENT && (
+        <Link
+          to={NEW_APPOINTMENT}
+          aria-label="Novo agendamento"
+          className="fixed right-5 bottom-5 grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_12px_30px_rgb(69_102_192/0.45)] lg:hidden"
+        >
+          <Plus className="size-6" strokeWidth={1.5} aria-hidden />
+        </Link>
+      )}
     </div>
   );
 }

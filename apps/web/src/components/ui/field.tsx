@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react';
 import {
   type InputHTMLAttributes,
   type ReactNode,
@@ -45,8 +46,18 @@ export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElem
   return <input className={cn(control, 'h-12', className)} {...props} />;
 }
 
+/** Seta própria (a nativa fica colada na borda direita). */
 export function Select({ className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={cn(control, 'h-12', className)} {...props} />;
+  return (
+    <div className="relative">
+      <select className={cn(control, 'h-12 appearance-none pr-12', className)} {...props} />
+      <ChevronDown
+        className="pointer-events-none absolute top-1/2 right-5 size-4 -translate-y-1/2 text-muted"
+        strokeWidth={1.5}
+        aria-hidden
+      />
+    </div>
+  );
 }
 
 export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {

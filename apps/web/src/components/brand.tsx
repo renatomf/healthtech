@@ -47,7 +47,7 @@ export function Heading({
   className?: string;
 }) {
   return (
-    <h1 className={cn('text-4xl leading-[1.1] font-light tracking-tight sm:text-5xl', className)}>
+    <h1 className={cn('text-3xl leading-[1.15] font-light tracking-tight sm:text-4xl', className)}>
       {children}
       {tail && <span className="block text-muted first-letter:uppercase">{tail}</span>}
     </h1>

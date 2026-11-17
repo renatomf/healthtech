@@ -72,11 +72,35 @@
   --color-hero-from: var(--hero-from);
   --color-hero-to: var(--hero-to);
   --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --radius-4xl: 1.75rem;
+  /* Cantos um pouco mais contidos: cards 20 px, linhas e caixas internas 16 px. */
+  --radius-4xl: 1.25rem;
+  --radius-3xl: 1rem;
 }
 
 body {
   @apply bg-background font-sans text-foreground antialiased;
+}
+
+/* Cursor de texto só onde se digita; mão só no que é clicável. */
+body {
+  cursor: default;
+}
+a[href],
+button:not(:disabled),
+select:not(:disabled),
+label:has(input[type="radio"]),
+summary {
+  cursor: pointer;
+}
+input:not([type="radio"]):not([type="checkbox"]),
+textarea {
+  cursor: text;
+}
+
+/* Barras de rolagem internas discretas (lista da agenda). */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 :focus-visible {
