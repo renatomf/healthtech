@@ -10,18 +10,48 @@ Aplicação web para uma clínica agendar exames, cadastrar laudos (rascunho →
 
 ## Sumário
 
-1. [Como executar](#como-executar)
-2. [Banco e dados fictícios](#banco-e-dados-fictícios)
-3. [Contas de demonstração](#contas-de-demonstração)
-4. [Testes](#testes)
-5. [Variáveis de ambiente](#variáveis-de-ambiente)
-6. [Matriz de requisitos](#matriz-de-requisitos)
-7. [Roteiro de avaliação](#roteiro-de-avaliação)
-8. [Decisões técnicas](#decisões-técnicas)
-9. [Fuso horário adotado](#fuso-horário-adotado)
-10. [Limitações e pendências](#limitações-e-pendências)
-11. [Tempo dedicado](#tempo-dedicado)
-12. [Uso de IA](#uso-de-ia)
+1. [Entrega](#entrega)
+2. [Como executar](#como-executar)
+3. [Banco e dados fictícios](#banco-e-dados-fictícios)
+4. [Contas de demonstração](#contas-de-demonstração)
+5. [Testes](#testes)
+6. [Variáveis de ambiente](#variáveis-de-ambiente)
+7. [Matriz de requisitos](#matriz-de-requisitos)
+8. [Roteiro de avaliação](#roteiro-de-avaliação)
+9. [Decisões técnicas](#decisões-técnicas)
+10. [Fuso horário adotado](#fuso-horário-adotado)
+11. [Limitações e pendências](#limitações-e-pendências)
+12. [Tempo dedicado](#tempo-dedicado)
+13. [Créditos](#créditos)
+14. [Uso de IA](#uso-de-ia)
+
+## Entrega
+
+O que o enunciado pede e onde está:
+
+| Item pedido                                                      | Onde está                                                                                                                                                         |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Código do frontend e do backend                                  | [`apps/web`](apps/web) (React + Vite), [`apps/api`](apps/api) (Fastify), [`packages/shared`](packages/shared) (contratos Zod e fuso usados pelos dois)            |
+| Instruções para instalar e executar                              | [Como executar](#como-executar): com Docker (um comando) ou local com `pnpm dev`                                                                                  |
+| Preparar o banco e carregar dados fictícios                      | [Banco e dados fictícios](#banco-e-dados-fictícios): migrations aplicadas ao subir a API; seed com datas relativas a hoje                                         |
+| Credenciais das contas de demonstração                           | [Contas de demonstração](#contas-de-demonstração) (também visíveis na tela de login)                                                                              |
+| Instruções para executar os testes                               | [Testes](#testes): unitários, integração com Postgres real, E2E com Playwright + axe                                                                              |
+| Arquivo de exemplo das variáveis de ambiente, sem segredos reais | [`.env.example`](.env.example) (só valores de desenvolvimento; o `JWT_SECRET` de exemplo pede para ser trocado) e [Variáveis de ambiente](#variáveis-de-ambiente) |
+| Decisões técnicas, limitações e pendências                       | [Decisões técnicas](#decisões-técnicas), [Fuso horário adotado](#fuso-horário-adotado), [Limitações e pendências](#limitações-e-pendências)                       |
+| Tempo aproximado dedicado                                        | [Tempo dedicado](#tempo-dedicado)                                                                                                                                 |
+
+Além do pedido: [roteiro de teste manual](docs/ROTEIRO_TESTE.md) passo a passo, [matriz requisito → garantia → teste](#matriz-de-requisitos), CI no GitHub Actions e [registro do uso de IA](docs/PROCESSO_IA.md) (vibe coding é requisito do desafio).
+
+```
+apps/
+  api/        Fastify: módulos identity, scheduling e reports (domain → application → infra → http)
+  web/        React: telas da clínica e do paciente
+packages/
+  shared/     contratos Zod (request/response) e utilitários de fuso
+e2e/          Playwright + axe
+scripts/      demo-race.ts (10 reservas simultâneas)
+docs/         requisitos, arquitetura, segurança, testes, ADRs, roteiro de teste, processo com IA
+```
 
 ## Como executar
 
@@ -151,7 +181,20 @@ Roteiro completo, passo a passo e com o resultado esperado de cada ação: **[`d
 
 ## Decisões técnicas
 
-Resumo em [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md); decisões em [`docs/adr/`](docs/adr/); segurança em [`docs/SEGURANCA.md`](docs/SEGURANCA.md); testes em [`docs/TESTES.md`](docs/TESTES.md); interpretações do enunciado em [`docs/INTERPRETACOES.md`](docs/INTERPRETACOES.md).
+| Decisão                                                                                                      | Por quê                                                                                                                   | Detalhe                                             |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Monólito modular (`identity`, `scheduling`, `reports`), camadas verificadas no CI                            | Uma transação local cobre agendamento e laudo; fronteiras sem a cerimônia de microsserviços                               | [ADR-001](docs/adr/001-monolito-modular.md)         |
+| PostgreSQL + Drizzle, migrations versionadas (nunca `push`)                                                  | As regras críticas dependem de recursos do banco: índice parcial, CHECK, `FOR UPDATE`, `timestamptz`                      | [ADR-002](docs/adr/002-postgresql-drizzle.md)       |
+| **Índice único parcial** `uq_active_slot` decide a disputa pelo horário                                      | Checar e depois inserir falha sob concorrência; o índice deixa só um vencer e libera o horário cancelado                  | [ADR-003](docs/adr/003-indice-unico-parcial.md)     |
+| **Lock de linha** no agendamento para cancelar, salvar e publicar laudo; status do laudo lido depois do lock | Cancelar × publicar ao mesmo tempo não pode terminar cancelado com laudo publicado (o teste de corrida pegou um bug aqui) | [ADR-004](docs/adr/004-lock-de-linha.md)            |
+| UTC no banco, **horário de Brasília** na exibição e no cálculo de "dia"                                      | Mesma data para clínica e paciente, independente do fuso do navegador ou do servidor                                      | [ADR-005](docs/adr/005-fuso-horario.md)             |
+| JWT em cookie `httpOnly`, perfil conferido no banco a cada requisição                                        | Simples, como pede o enunciado, sem expor o token a scripts                                                               | [ADR-006](docs/adr/006-jwt-cookie-httponly.md)      |
+| Autorização **na própria consulta** (`patient_id` do token); recurso de outro paciente → 404                 | Não depende de lembrar um `if` em cada rota e não revela que o recurso existe                                             | [ADR-007](docs/adr/007-autorizacao-escopo-query.md) |
+| Testes de integração com **Postgres real** (Testcontainers)                                                  | Concorrência e constraints só se provam no banco de verdade                                                               | [ADR-008](docs/adr/008-testes-postgres-real.md)     |
+| Fastify + contratos Zod em `packages/shared`                                                                 | Validação, serialização e formulários com o mesmo schema; o DTO do paciente não tem campo de rascunho                     | [ADR-009](docs/adr/009-fastify-contratos-zod.md)    |
+| Front em React + Vite + Tailwind, select e date picker próprios e acessíveis                                 | Visual consistente nos dois temas; axe sem violações sérias                                                               | [ARQUITETURA.md](docs/ARQUITETURA.md)               |
+
+Mais: [arquitetura](docs/ARQUITETURA.md) · [segurança e LGPD](docs/SEGURANCA.md) · [estratégia de testes](docs/TESTES.md) · [interpretações do enunciado](docs/INTERPRETACOES.md).
 
 ## Fuso horário adotado
 
@@ -182,7 +225,12 @@ Pendências para produção (revogação de sessão, MFA, auditoria de leitura, 
 
 ## Tempo dedicado
 
-Ver [`docs/TEMPO.md`](docs/TEMPO.md).
+| Etapa                                                             | Quando                                     | Tempo                    |
+| ----------------------------------------------------------------- | ------------------------------------------ | ------------------------ |
+| Brainstorming, arquitetura e documentação inicial (`docs/`, ADRs) | antes do primeiro commit                   | _a preencher pelo autor_ |
+| Implementação, testes, front e ajustes (36+ commits)              | 16/11, 17:21 → 23:00 (horário de Brasília) | ~5h40                    |
+
+Detalhe em [`docs/TEMPO.md`](docs/TEMPO.md).
 
 ## Créditos
 
