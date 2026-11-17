@@ -17,7 +17,7 @@ export function Brand({ inverted = false }: { inverted?: boolean }) {
   );
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ small = false }: { small?: boolean }) {
   const { theme, toggle } = useTheme();
   const dark = theme === 'dark';
   return (
@@ -25,12 +25,15 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={dark ? 'Usar tema claro' : 'Usar tema escuro'}
-      className="grid size-10 place-items-center rounded-full bg-surface-muted text-muted transition hover:text-foreground"
+      className={cn(
+        'grid place-items-center rounded-full bg-surface-muted text-muted transition hover:text-foreground',
+        small ? 'size-8' : 'size-10',
+      )}
     >
       {dark ? (
-        <Sun className="size-4" strokeWidth={1.5} aria-hidden />
+        <Sun className={small ? 'size-3.5' : 'size-4'} strokeWidth={1.5} aria-hidden />
       ) : (
-        <Moon className="size-4" strokeWidth={1.5} aria-hidden />
+        <Moon className={small ? 'size-3.5' : 'size-4'} strokeWidth={1.5} aria-hidden />
       )}
     </button>
   );

@@ -41,7 +41,7 @@ export function ClinicLayout() {
       </aside>
 
       <div className="flex min-h-dvh flex-col lg:min-h-0">
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-surface px-4 py-3 lg:static lg:justify-end lg:px-8">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-surface px-4 py-3 lg:static lg:justify-end lg:px-8 lg:py-2">
           <span className="lg:hidden">
             <Brand />
           </span>

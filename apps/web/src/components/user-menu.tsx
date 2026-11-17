@@ -20,11 +20,14 @@ function initials(name = '') {
   ).toUpperCase();
 }
 
-function Avatar({ name }: { name?: string }) {
+function Avatar({ name, small = false }: { name?: string; small?: boolean }) {
   return (
     <span
       aria-hidden
-      className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-xs text-primary-foreground"
+      className={cn(
+        'grid shrink-0 place-items-center rounded-full bg-primary text-primary-foreground',
+        small ? 'size-7 text-[10px]' : 'size-9 text-xs',
+      )}
     >
       {initials(name)}
     </span>
@@ -46,21 +49,22 @@ export function UserMenu({ links = [] }: { links?: MenuLink[] }) {
 
   return (
     <>
+      {/* Desktop: tema → quem está logado → sair (no canto direito). */}
       <div className="hidden items-center gap-2 lg:flex">
-        <div className="flex items-center gap-3 rounded-full bg-surface-muted py-1 pr-5 pl-1">
-          <Avatar name={me.data?.name} />
+        <ThemeToggle small />
+        <div className="flex items-center gap-2 rounded-full bg-surface-muted py-0.5 pr-4 pl-0.5">
+          <Avatar name={me.data?.name} small />
           <span className="leading-tight">
-            <span className="block text-sm">{me.data?.name}</span>
-            <span className="block text-xs text-muted">{me.data?.email}</span>
+            <span className="block text-[13px]">{me.data?.name}</span>
+            <span className="block text-[11px] text-muted">{me.data?.email}</span>
           </span>
         </div>
-        <ThemeToggle />
         <button
           type="button"
           onClick={() => logout.mutate()}
-          className="flex h-10 items-center gap-2 rounded-full px-4 text-sm text-muted transition hover:bg-surface-muted hover:text-foreground"
+          className="flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] text-muted transition hover:bg-surface-muted hover:text-foreground"
         >
-          <LogOut className="size-4" strokeWidth={1.5} aria-hidden />
+          <LogOut className="size-3.5" strokeWidth={1.5} aria-hidden />
           Sair
         </button>
       </div>
