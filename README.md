@@ -194,14 +194,14 @@ pnpm install
 cp .env.example .env     # Windows (cmd): copy .env.example .env
 ```
 
-| Comando                 | O que roda                                                                                                                          | Requisitos                                           |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `pnpm test:unit`        | Regras de domínio, fuso, mensagens do front                                                                                         | —                                                    |
-| `pnpm test:integration` | API + Postgres real (Testcontainers, migrations reais): os 5 cenários do enunciado, corridas, constraints, varredura de autorização | Docker                                               |
-| `pnpm test`             | Os dois acima                                                                                                                       | Docker                                               |
-| `pnpm verify`           | Biome + typecheck + dependency-cruiser + `pnpm test`                                                                                | Docker                                               |
-| `pnpm test:e2e`         | Playwright: 3 fluxos + navegador em `Asia/Tokyo` + axe em 6 telas nos temas claro e escuro (reseta o banco antes)                   | Stack no ar (`docker compose up -d`) e Google Chrome |
-| `pnpm demo:race`        | 10 reservas simultâneas do mesmo horário contra a API rodando: 1 aceita, 9 × 409                                                    | Stack no ar com seed                                 |
+| Comando                 | O que roda                                                                                                                                                                                                                                  | Requisitos                                           |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `pnpm test:unit`        | Regras de domínio, fuso, mensagens do front                                                                                                                                                                                                 | —                                                    |
+| `pnpm test:integration` | API + Postgres real (Testcontainers, migrations reais): os 5 cenários do enunciado, corridas, constraints, varredura de autorização                                                                                                         | Docker                                               |
+| `pnpm test`             | Os dois acima                                                                                                                                                                                                                               | Docker                                               |
+| `pnpm verify`           | Biome + typecheck + dependency-cruiser + `pnpm test` (66 testes)                                                                                                                                                                            | Docker                                               |
+| `pnpm test:e2e`         | Playwright no Chrome, 13 testes: os 3 fluxos principais, navegador em `Asia/Tokyo`, tema claro como padrão, filtro só pelo teclado, date picker (dias passados, Esc e foco) e axe em 6 telas nos temas claro e escuro. Reseta o banco antes | Stack no ar (`docker compose up -d`) e Google Chrome |
+| `pnpm demo:race`        | 10 reservas simultâneas do mesmo horário contra a API rodando: 1 aceita, 9 × 409                                                                                                                                                            | Stack no ar com seed                                 |
 
 Os 5 cenários do enunciado estão em `describe('Cenário N — …')`: [agendamento](apps/api/src/modules/scheduling/http/scenarios.int.test.ts) (1 e 5) e [laudos](apps/api/src/modules/reports/http/scenarios.int.test.ts) (2, 3 e 4). O CI roda tudo com `TZ=UTC` e com `TZ=Asia/Tokyo`.
 
@@ -301,7 +301,7 @@ Pendências para produção (revogação de sessão, MFA, auditoria de leitura, 
 | Etapa                                                             | Quando                                     | Tempo                    |
 | ----------------------------------------------------------------- | ------------------------------------------ | ------------------------ |
 | Brainstorming, arquitetura e documentação inicial (`docs/`, ADRs) | antes do primeiro commit                   | _a preencher pelo autor_ |
-| Implementação, testes, front e ajustes (36+ commits)              | 16/11, 17:21 → 23:00 (horário de Brasília) | ~5h40                    |
+| Implementação, testes, front e ajustes (42 commits)               | 16/11, 17:21 → 23:30 (horário de Brasília) | ~6h10                    |
 
 Detalhe em [`docs/TEMPO.md`](docs/TEMPO.md).
 
